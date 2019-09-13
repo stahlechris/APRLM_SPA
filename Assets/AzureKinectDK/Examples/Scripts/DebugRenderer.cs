@@ -111,6 +111,11 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
         }//end if(canUpdate) 
     }//end Update()
 
+	public void TESTAAJSHDFLJASDHFLKAJSHDFLKAJSDHFKJH()
+	{
+
+	}
+
     private void OnDisable()
     {
         //todo test if only called once at the end of the program, if so, renable the below
