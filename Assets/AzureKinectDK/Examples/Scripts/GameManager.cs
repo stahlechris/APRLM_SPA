@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using UnityEditor;
 using Microsoft.Azure.Kinect.Sensor.BodyTracking;
 using System;
-using MEC;
 
 namespace APRLM.Game
 {
@@ -40,6 +39,7 @@ namespace APRLM.Game
 
         protected override void Awake()
         {
+			print("GM awake");
             Screen.sleepTimeout = SleepTimeout.NeverSleep;
             base.Awake();
             currentState = GameState.PlayScenePressed;
@@ -48,10 +48,7 @@ namespace APRLM.Game
         }
         private void Start()
         {
-            Debug.Log("gm start called");
-            Timing.RunCoroutine(Main());
-
-            //SceneManager.sceneLoaded += Handle_OnSceneLoaded;
+            Debug.Log("GM start called");
         }
         public List<Pose> GetPoseList()
         {
@@ -70,21 +67,13 @@ namespace APRLM.Game
                 currentPose = poseList[0];
             }
         }
-        //private void OnSceneLoaded(Scene scene,LoadSceneMode mode)
-        //{
-        //    print(scene.name);
 
-        //    if(scene.name == "CaptureScene")
-        //    {
-        //        DebugRenderer.Instance.canUpdate = true;
-        //        ///addition 9.4/2019
-        //        print(scene.name + "printed because if(scene.name == CaptureScene)");
-        //        //if we are in the capture scene, the countdown is over
-        //        currentState = GameState.ReadyNextCountDownOver;
-        //    }
-        //}
+		private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+		{
+			print(scene.name + " loaded");
+		}
 
-        private bool CheckForPoses()
+		private bool CheckForPoses()
         {
             if (poseList.Count < 1)
             {
@@ -96,20 +85,8 @@ namespace APRLM.Game
                 return true;
             }
         }
-        public void LoadScene(int scene)
-        {
-            if(CheckForPoses())
-            {
-                //Load another scene on different thread
-                SceneManager.LoadSceneAsync(scene);
-            }
-            else
-            {
-                EditorApplication.isPlaying = false;
-            }
-        }
 
-        public void LoadSceneAdditive(int scene)
+        public void LoadSceneAdditively(int scene)
         {
             if (CheckForPoses())
             {
@@ -145,43 +122,17 @@ namespace APRLM.Game
             }
             print("Blockman was created in GM");
         }
-
-        //void Handle_OnSceneLoaded(Scene scene, LoadSceneMode mode)
-        //{
-        //    if (currentState == GameState.WaitingForUserToPressStart)
-        //    {
-        //        LoadScene((int)SceneEnums.Scenes.MainMenu);
-        //    }
-        //}
-
-        IEnumerator<float> Main()
-        {
-            for(currentPoseIndex = 0;currentPoseIndex <poseList.Count;currentPoseIndex ++)
-            {
-                //Wait until the capture is completed, by capturing X skeletons
-                yield return Timing.WaitUntilTrue(() => currentState == GameState.CaptureCompleted);
-                print("capture completed, state change in GM");
-				
-				// 9.4.2019 saw 5 in the Skeletons length in inspector, can write out before clearing
-                DebugRenderer.Instance.skeletons.Clear();
-                //9.4 we confirmed that list is clear before going into capture scene for the second time.
-
-                //todo update pose list 9.6 updated pose list
-                currentPose = poseList[currentPoseIndex];
-
-                currentState = GameState.WaitingForUserToPressStart;
-
-                //this is here for testing if the pose list gets decremented, we want to load back to ReadyNextMenu irl
-
-                //Load the menu ////9.6 i tihnk we cant have loadscene call in a coroutine, awake is being called twice 
-                //LoadScene((int)SceneEnums.Scenes.MainMenu);
-            }
-		}
+		
 		private void OnDisable()//a persistant singleton class will only have this called once, when program ending.
 		{
 			print("OnDisabled GM");
-			//Must unsubscribe from event, else explosion.
-			//SceneManager.sceneLoaded -= Handle_OnSceneLoaded;
 		}
+
+		public void toggleRecording_linkedToToggle()
+		{
+
+		}
+
+		//public void LoadScene(Scene scene, 
 	}
 }
