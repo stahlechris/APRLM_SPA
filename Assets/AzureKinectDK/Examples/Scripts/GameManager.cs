@@ -33,8 +33,9 @@ namespace APRLM.Game
         public List<Pose> poseList;
         public GameState currentState;
         public Pose currentPose;
-        public GameObject[] blockman; //todo refactor into a blockmanMaker.cs
-        public GameObject blockPrefab;
+		public GameObject[] blockman; //todo refactor into a blockmanMaker.cs
+		public GameObject[] blockmanCaptured; //todo refactor into a blockmanMaker.cs
+		public GameObject blockPrefab;
         public int currentPoseIndex;
 
         protected override void Awake()
@@ -45,6 +46,7 @@ namespace APRLM.Game
             currentState = GameState.PlayScenePressed;
             CheckSettings();
             MakeBlockMan();
+			MakeBlockManCaptured();
         }
         private void Start()
         {
@@ -93,36 +95,62 @@ namespace APRLM.Game
                 //Load another scene on different thread
                 SceneManager.LoadSceneAsync(scene,LoadSceneMode.Additive);
             }
-            else
+			else
+			{
+
+			}
             {
                 EditorApplication.isPlaying = false;
             }
         }
 
-        //todo put block man under this GameManager so they dont dissapear
-        private void MakeBlockMan()
-        {
-            int size = (int)JointId.Count;
+		//todo put block man under this GameManager so they dont dissapear
+		private void MakeBlockMan()
+		{
+			int size = (int)JointId.Count;
 
-            blockman = new GameObject[size];
+			blockman = new GameObject[size];
 
-            for (var i = 0; i < size; i++)
-            {
-                //make a cube for every joint
-                //var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                GameObject cube = Instantiate(blockPrefab,transform);
-                //deactivate it - (its Start() or OnEnable() won't be called)
-                cube.SetActive(false);
-                //give cube a name of matching joint
-                cube.name = Enum.GetName(typeof(JointId), i);
-                //why do we multiply by .4?  idk
-                cube.transform.localScale = Vector3.one * 0.4f;
-                //add our cube to the skeleton[]
-                blockman[i] = cube;
-            }
-            print("Blockman was created in GM");
-        }
-		
+			for (var i = 0; i < size; i++)
+			{
+				//make a cube for every joint
+				//var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+				GameObject cube = Instantiate(blockPrefab, transform);
+				//deactivate it - (its Start() or OnEnable() won't be called)
+				cube.SetActive(false);
+				//give cube a name of matching joint
+				cube.name = Enum.GetName(typeof(JointId), i);
+				//why do we multiply by .4?  idk
+				cube.transform.localScale = Vector3.one * 0.4f;
+				//add our cube to the skeleton[]
+				blockman[i] = cube;
+			}
+			print("Blockman was created in GM");
+		}
+
+		public void MakeBlockManCaptured()
+		{
+			int size = (int)JointId.Count;
+
+			blockmanCaptured = new GameObject[size];
+
+			for (var i = 0; i < size; i++)
+			{
+				//make a cube for every joint
+				//var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+				GameObject cube = Instantiate(blockPrefab, transform);
+				//deactivate it - (its Start() or OnEnable() won't be called)
+				cube.SetActive(false);
+				//give cube a name of matching joint
+				cube.name = Enum.GetName(typeof(JointId), i);
+				//why do we multiply by .4?  idk
+				cube.transform.localScale = Vector3.one * 0.4f;
+				//add our cube to the skeleton[]
+				blockmanCaptured[i] = cube;
+			}
+			print("BlockmanCaptured was created in GM");
+		}
+
 		private void OnDisable()//a persistant singleton class will only have this called once, when program ending.
 		{
 			print("OnDisabled GM");

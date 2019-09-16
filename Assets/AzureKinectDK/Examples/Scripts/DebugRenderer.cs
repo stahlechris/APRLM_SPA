@@ -5,7 +5,7 @@ using Microsoft.Azure.Kinect.Sensor;
 using Microsoft.Azure.Kinect.Sensor.BodyTracking;
 using Stahle.Utility;
 using APRLM.Game;
-using MEC;
+using APRLM.Utilities;
 
 public class DebugRenderer : PersistantSingleton<DebugRenderer>
 {
@@ -17,8 +17,10 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
     public Renderer renderer;
     [SerializeField]
     public List<Skeleton> skeletons = new List<Skeleton>();
+	GameObject[] blockman2;
 
-    public bool canUpdate;
+
+	public bool canUpdate;
 
     protected override void Awake()
     {
@@ -99,21 +101,56 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 					}
                 }
             }
-   //         if (skeletons.Count > 4) // and the current scene is CaptureScene
-   //         {
-   //             Debug.Log("we have enough skeletons");
-   //             GameManager.Instance.currentState = GameState.CaptureCompleted;
-   //             //Disable this Update loop's logic from running
-   //             canUpdate = false;
-			//	//GameManager.Instance.LoadScene((int)SceneEnums.Scenes.GetReady);
-			//}
+			if (skeletons.Count > 4) // and the current scene is CaptureScene
+			{
+				blockman2 = GameManager.Instance.blockmanCaptured;
+				foreach (GameObject go in blockman2)
+				{
+					go.SetActive(true);
+				}
 
-        }//end if(canUpdate) 
-    }//end Update()
+				// skeletons is a List<Skeleton> of size 5
+				for (int i = 0; i < (int)JointId.Count; i++)
+				{
+					List<Vector3> positionsOfSameJointPositions = new List<Vector3>();
+					
+					for (int j = 0; j < skeletons.Count; j++)
+					{
+						float[] pos = skeletons[j].Joints[i].Position;
+						
+						Vector3 posV3 = new Vector3(pos[0], -pos[1], pos[2]) * 0.004f;
+						positionsOfSameJointPositions.Add(posV3);
+						
+					}
+					Vector3 averageOfSingleJointI = Vector3Helper.FindAveragePosition(positionsOfSameJointPositions);
+
+					float[] rot = skeletons[0].Joints[i].Orientation;
+					Quaternion rotationOfFirstSkeleton = new Quaternion(rot[1], rot[2], rot[3], rot[0]);
+
+					var jointCube = blockman2[i];
+					jointCube.transform.SetPositionAndRotation(averageOfSingleJointI, rotationOfFirstSkeleton);
+
+				}
+
+				Debug.Log("we have enough skeletons");
+				//GameManager.Instance.currentState = GameState.CaptureCompleted;
+				//Disable this Update loop's logic from running
+				canUpdate = false;
+				//GameManager.Instance.LoadScene((int)SceneEnums.Scenes.GetReady);
+			}
+
+		}//end if(canUpdate) 
+	}//end Update()
 
 	public void TESTAAJSHDFLJASDHFLKAJSHDFLKAJSDHFKJH()
 	{
+		// load new additive scene/panel
 
+		// load skeleton into new blockman
+		//GameManager.MakeBlockManCaptured();
+		// does this look ok yes no
+		// no, redo
+		// yes, save and indicate moving to next pose?
 	}
 
     private void OnDisable()
