@@ -103,6 +103,7 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
             }
 			if (skeletons.Count > 4) // and the current scene is CaptureScene
 			{
+				Debug.Log("creating blockman 2 stuff");
 				blockman2 = GameManager.Instance.blockmanCaptured;
 				foreach (GameObject go in blockman2)
 				{
