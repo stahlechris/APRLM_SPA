@@ -73,7 +73,7 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 				CapturedResultsRoot.SetActive(true);
 				JointPositionArea_Text.text = "";
 				averageOutSkeletons();
-
+				showNewBlockman(true);
 				//JointPositionArea_Text.text = "hallo you kilt my fader prepare to di";
 			}
 
@@ -166,6 +166,18 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 		//GameManager.Instance.LoadScene((int)SceneEnums.Scenes.GetReady);
 	}
 
+	void showNewBlockman(bool shouldShow)
+	{
+		foreach (GameObject go in GameManager.Instance.blockman)
+		{
+			go.SetActive(!shouldShow);
+		}
+
+		foreach (GameObject go in GameManager.Instance.blockmanCaptured)
+		{
+			go.SetActive(shouldShow);
+		}
+	}
 	public void TESTAAJSHDFLJASDHFLKAJSHDFLKAJSDHFKJH()
 	{
 		//enable canUpdate for skeleton capturing
