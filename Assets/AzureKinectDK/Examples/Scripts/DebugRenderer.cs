@@ -156,7 +156,7 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 			jointCube.transform.SetPositionAndRotation(averageOfSingleJointI, rotationOfFirstSkeleton);
 
 			//now that blockman2 joint is set, format and print that data
-			JointPositionArea_Text.text += JointDataStringFormatter.formatJointDataToText(averageOfSingleJointI);
+			JointPositionArea_Text.text += JointDataStringFormatter.formatJointDataToText(averageOfSingleJointI, (JointId)i);
 		}
 
 		Debug.Log("we have enough skeletons");
