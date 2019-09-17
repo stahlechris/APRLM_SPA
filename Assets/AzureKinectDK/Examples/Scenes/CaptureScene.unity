@@ -315,7 +315,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &298368307
 RectTransform:
   m_ObjectHideFlags: 0
@@ -851,6 +851,8 @@ MonoBehaviour:
   debugObjects: []
   renderer: {fileID: 907009271}
   skeletons: []
+  JointPositionArea_Text: {fileID: 1350830850}
+  CapturedResultsRoot: {fileID: 298368306}
   canUpdate: 1
 --- !u!23 &907009271
 MeshRenderer:
@@ -1436,6 +1438,7 @@ MonoBehaviour:
   currentState: 0
   currentPose: {fileID: 11400000, guid: 1ab04e2619b5d4fd89f9d7eb20a9b131, type: 2}
   blockman: []
+  blockmanCaptured: []
   blockPrefab: {fileID: 4116434936544496493, guid: 418d3510140dc4b7988a8aa63fae93fc,
     type: 3}
   currentPoseIndex: 0

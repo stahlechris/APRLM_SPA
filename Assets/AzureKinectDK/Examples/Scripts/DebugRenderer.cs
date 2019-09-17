@@ -6,6 +6,7 @@ using Microsoft.Azure.Kinect.Sensor.BodyTracking;
 using Stahle.Utility;
 using APRLM.Game;
 using APRLM.Utilities;
+using UnityEngine.UI;
 
 public class DebugRenderer : PersistantSingleton<DebugRenderer>
 {
@@ -18,6 +19,8 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
     [SerializeField]
     public List<Skeleton> skeletons = new List<Skeleton>();
 	GameObject[] blockman2;
+	public Text JointPositionArea_Text;
+	public GameObject CapturedResultsRoot;
 
 
 	public bool canUpdate;
@@ -67,7 +70,11 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 			captureSkeletons();
 			if (skeletons.Count > 4) // and the current scene is CaptureScene
 			{
+				CapturedResultsRoot.SetActive(true);
+				JointPositionArea_Text.text = "";
 				averageOutSkeletons();
+
+				//JointPositionArea_Text.text = "hallo you kilt my fader prepare to di";
 			}
 
 		}//end if(canUpdate) 
@@ -148,6 +155,8 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 			var jointCube = blockman2[i];
 			jointCube.transform.SetPositionAndRotation(averageOfSingleJointI, rotationOfFirstSkeleton);
 
+			//now that blockman2 joint is set, format and print that data
+			JointPositionArea_Text.text += JointDataStringFormatter.formatJointDataToText(averageOfSingleJointI);
 		}
 
 		Debug.Log("we have enough skeletons");
