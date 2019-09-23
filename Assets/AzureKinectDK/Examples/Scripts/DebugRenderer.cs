@@ -21,6 +21,7 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 	GameObject[] blockman2;
 	public Text JointPositionArea_Text;
 	public GameObject CapturedResultsRoot;
+	public GameObject blockmanCapturedParent;
 
 
 	public bool canUpdate;
@@ -34,6 +35,10 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 	public void Start()
 	{
 		print("DebugRenderer start");
+		if (CapturedResultsRoot.activeInHierarchy)
+		{
+			CapturedResultsRoot.SetActive(false);
+		}
 		debugObjects = GameManager.Instance.blockman;
 		foreach (GameObject go in debugObjects)
 		{
@@ -168,8 +173,14 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 
 	void showNewBlockman(bool shouldShow)
 	{
+		if (blockmanCapturedParent == null)
+		{
+			blockmanCapturedParent = new GameObject();
+		}
+
 		foreach (GameObject go in GameManager.Instance.blockman)
 		{
+			go.transform.SetParent(blockmanCapturedParent.transform);
 			go.SetActive(!shouldShow);
 		}
 
@@ -177,7 +188,10 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 		{
 			go.SetActive(shouldShow);
 		}
+
+		//blockmanCapturedParent.transform.Translate(new Vector3());
 	}
+
 	public void TESTAAJSHDFLJASDHFLKAJSHDFLKAJSDHFKJH()
 	{
 		//enable canUpdate for skeleton capturing
@@ -205,6 +219,16 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 		{
 			device.Dispose();
 		}
+	}
+
+	public void poseAccepted_linkToButton()
+	{
+		Debug.Log("pose accepted");
+	}
+
+	public void poseDeclined_linkToButton()
+	{
+		Debug.Log("pose declined");
 	}
 
 }
