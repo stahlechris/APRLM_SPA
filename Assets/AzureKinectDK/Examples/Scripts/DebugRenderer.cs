@@ -192,6 +192,11 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 		//blockmanCapturedParent.transform.Translate(new Vector3());
 	}
 
+	void resetSkeletons()
+	{
+		skeletons.Clear();
+	}
+
 	public void TESTAAJSHDFLJASDHFLKAJSHDFLKAJSDHFKJH()
 	{
 		//enable canUpdate for skeleton capturing
@@ -224,11 +229,19 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 	public void poseAccepted_linkToButton()
 	{
 		Debug.Log("pose accepted");
+		CapturedResultsRoot.SetActive(false);
+		showNewBlockman(false);
+		resetSkeletons();
+		canUpdate = true;
 	}
 
 	public void poseDeclined_linkToButton()
 	{
 		Debug.Log("pose declined");
+		CapturedResultsRoot.SetActive(false);
+		showNewBlockman(false);
+		resetSkeletons();
+		canUpdate = true;
 	}
 
 }
