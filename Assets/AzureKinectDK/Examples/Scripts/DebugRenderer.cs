@@ -23,6 +23,7 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 	public GameObject CapturedResultsRoot;
 
 
+
 	public bool canUpdate;
 
     protected override void Awake()
@@ -155,8 +156,12 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 			var jointCube = blockman2[i];
 			jointCube.transform.SetPositionAndRotation(averageOfSingleJointI, rotationOfFirstSkeleton);
 
+
 			//now that blockman2 joint is set, format and print that data
 			JointPositionArea_Text.text += JointDataStringFormatter.formatJointDataToText(averageOfSingleJointI, (JointId)i);
+
+
+
 		}
 
 		Debug.Log("we have enough skeletons");
@@ -206,5 +211,4 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 			device.Dispose();
 		}
 	}
-
 }
