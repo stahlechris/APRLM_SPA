@@ -13,17 +13,15 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
     Device device;
     BodyTracker tracker;
     Skeleton skeleton;
-    [SerializeField]
-    GameObject[] debugObjects;
+    [SerializeField] GameObject[] debugObjects;
     public Renderer renderer;
-    [SerializeField]
-    public List<Skeleton> skeletons = new List<Skeleton>();
-	GameObject[] blockman2;
+    [SerializeField] public List<Skeleton> skeletons = new List<Skeleton>();
+	GameObject[] blockman_averagedResults;
 	public Text JointPositionArea_Text;
 	public GameObject CapturedResultsRoot;
-	public GameObject blockmanCapturedParent;
+	public GameObject blockman_averagedResults_parent;
 
-    [HideInInspector] public bool canUpdate = false;
+    [HideInInspector]public bool canUpdate = false;
 
     protected override void Awake()
     {
@@ -44,10 +42,14 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 			go.SetActive(true);
 		}
         print("Blockman was fetched from GM and set active here in DebugRenderer");
-		//InitCamera();
+
+        /*
+         * Disable for mac / enable for windows
+         * InitCamera();
+         */
     }
 
-    private void InitCamera()
+    void InitCamera()
     {
         this.device = Device.Open(0);
 		var config = new DeviceConfiguration
@@ -70,21 +72,25 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
     {
         if (canUpdate)
         {
-			streamCameraAsTexture();
-			captureSkeletons();
-			if (skeletons.Count > 4) // and the current scene is CaptureScene
+            /*
+             * Disable for mac / enable for windows
+               StreamCameraAsTexture();
+
+               CaptureSkeletonsFromCameraFrame();
+            */
+            //todo implement fake data skeletal capturing method here
+            if (skeletons.Count > 4)
 			{
 				CapturedResultsRoot.SetActive(true);
 				JointPositionArea_Text.text = "";
-				averageOutSkeletons();
-				showNewBlockman(true);
-				//JointPositionArea_Text.text = "hallo you kilt my fader prepare to di";
+				FindAverageSkeletalPosition();
+				EnableBlockman(true);
 			}
 
 		}//end if(canUpdate) 
 	}//end Update()
 
-	void streamCameraAsTexture()
+	void StreamCameraAsTexture()
 	{
 		//this streams camera output as a texture to a plane in the scene
 		using (Capture capture = device.GetCapture())
@@ -100,10 +106,9 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 			}
 		}
 	}
-
-	void captureSkeletons()
+    //Gets skeletal data from frames, pulls individual joint data from a skeleton, applies pos/rot to blocks representing joints
+    void CaptureSkeletonsFromCameraFrame()
 	{
-		//this gets skeleton data from frames and pulls individual joint data from the skeleton to apply to blocks that represent joints
 		using (var frame = tracker.PopResult())
 		{
 			Debug.LogFormat("{0} bodies found.", frame.NumBodies);
@@ -129,14 +134,13 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 		}
 	}
 
-	void averageOutSkeletons()
+	void FindAverageSkeletalPosition()
 	{
 		Debug.Log("creating blockman 2 stuff");
-		blockman2 = GameManager.Instance.blockmanCaptured;
-		foreach (GameObject go in blockman2)
+		blockman_averagedResults = GameManager.Instance.blockmanCaptured;
+		foreach (GameObject go in blockman_averagedResults)
 		{
 			go.SetActive(true);
-
 		}
 
 		// skeletons is a List<Skeleton> of size 5
@@ -157,7 +161,7 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 			float[] rot = skeletons[0].Joints[i].Orientation;
 			Quaternion rotationOfFirstSkeleton = new Quaternion(rot[1], rot[2], rot[3], rot[0]);
 
-			var jointCube = blockman2[i];
+			var jointCube = blockman_averagedResults[i];
 			jointCube.transform.SetPositionAndRotation(averageOfSingleJointI, rotationOfFirstSkeleton);
 
 			//now that blockman2 joint is set, format and print that data
@@ -165,52 +169,34 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 		}
 
 		Debug.Log("we have enough skeletons");
-		//GameManager.Instance.currentState = GameState.CaptureCompleted;
-		//Disable this Update loop's logic from running
+		//Disable this script's Update loop's logic from running
 		canUpdate = false;
-		//GameManager.Instance.LoadScene((int)SceneEnums.Scenes.GetReady);
 	}
 
-	void showNewBlockman(bool shouldShow)
+	void EnableBlockman(bool enable)
 	{
-		if (blockmanCapturedParent == null)
+		if (blockman_averagedResults_parent == null)
 		{
-			blockmanCapturedParent = new GameObject();
+			blockman_averagedResults_parent = new GameObject();
 		}
 
 		foreach (GameObject go in GameManager.Instance.blockman)
 		{
-			go.transform.SetParent(blockmanCapturedParent.transform);
-			go.SetActive(!shouldShow);
+			go.transform.SetParent(blockman_averagedResults_parent.transform);
+			go.SetActive(!enable);
 		}
 
 		foreach (GameObject go in GameManager.Instance.blockmanCaptured)
 		{
-			go.SetActive(shouldShow);
+			go.SetActive(enable);
 		}
-
 		//blockmanCapturedParent.transform.Translate(new Vector3());
 	}
 
-	void resetSkeletons()
+	void ClearSkeletonsList()
 	{
 		skeletons.Clear();
 	}
-
-
-	public void TESTAAJSHDFLJASDHFLKAJSHDFLKAJSDHFKJH()
-	{
-		//enable canUpdate for skeleton capturing
-		canUpdate = true;
-		// load new additive scene/panel
-
-		// load skeleton into new blockman
-		//GameManager.MakeBlockManCaptured();
-		// does this look ok yes no
-		// no, redo
-		// yes, save and indicate moving to next pose?
-	}
-
 
     private void OnDisable()
     {
@@ -228,21 +214,21 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 		}
 	}
 
-	public void poseAccepted_linkToButton()
+	public void PoseAccepted_linkToButton()
 	{
 		Debug.Log("pose accepted");
 		CapturedResultsRoot.SetActive(false);
-		showNewBlockman(false);
-		resetSkeletons();
+		EnableBlockman(false);
+		ClearSkeletonsList();
 		canUpdate = true;
 	}
 
-	public void poseDeclined_linkToButton()
+	public void PoseDeclined_linkToButton()
 	{
 		Debug.Log("pose declined");
 		CapturedResultsRoot.SetActive(false);
-		showNewBlockman(false);
-		resetSkeletons();
+		EnableBlockman(false);
+		ClearSkeletonsList();
 		canUpdate = true;
 	}
 

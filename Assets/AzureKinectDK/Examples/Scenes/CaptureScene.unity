@@ -559,7 +559,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 907009270}
-        m_MethodName: poseAccepted_linkToButton
+        m_MethodName: PoseAccepted_linkToButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -986,7 +986,7 @@ MonoBehaviour:
   JointPositionArea_Text: {fileID: 1350830850}
   CapturedResultsRoot: {fileID: 298368306}
   blockmanCapturedParent: {fileID: 0}
-  canUpdate: 1
+  canUpdate: 0
 --- !u!23 &907009271
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1446,7 +1446,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 907009270}
-        m_MethodName: poseDeclined_linkToButton
+        m_MethodName: PoseDeclined_linkToButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
