@@ -23,8 +23,7 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 	public GameObject CapturedResultsRoot;
 	public GameObject blockmanCapturedParent;
 
-
-	public bool canUpdate;
+    [HideInInspector] public bool canUpdate = false;
 
     protected override void Awake()
     {
@@ -45,7 +44,7 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 			go.SetActive(true);
 		}
         print("Blockman was fetched from GM and set active here in DebugRenderer");
-		InitCamera();
+		//InitCamera();
     }
 
     private void InitCamera()
@@ -137,6 +136,7 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 		foreach (GameObject go in blockman2)
 		{
 			go.SetActive(true);
+
 		}
 
 		// skeletons is a List<Skeleton> of size 5
@@ -197,6 +197,7 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 		skeletons.Clear();
 	}
 
+
 	public void TESTAAJSHDFLJASDHFLKAJSHDFLKAJSDHFKJH()
 	{
 		//enable canUpdate for skeleton capturing
@@ -209,6 +210,7 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 		// no, redo
 		// yes, save and indicate moving to next pose?
 	}
+
 
     private void OnDisable()
     {
