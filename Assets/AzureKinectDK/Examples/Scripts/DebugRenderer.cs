@@ -22,6 +22,7 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 	public Text JointPositionArea_Text;
 	public GameObject CapturedResultsRoot;
 	public GameObject blockmanCapturedParent;
+	MakeFile makeFile;
 
 
 	public bool canUpdate;
@@ -118,9 +119,9 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 				{
 					var joint = this.skeleton.Joints[i];
 					var pos = joint.Position;
-					Debug.Log("pos: " + (JointId)i + " " + pos[0] + " " + pos[1] + " " + pos[2]);
+					//Debug.Log("pos: " + (JointId)i + " " + pos[0] + " " + pos[1] + " " + pos[2]);
 					var rot = joint.Orientation;
-					Debug.Log("rot " + (JointId)i + " " + rot[0] + " " + rot[1] + " " + rot[2] + " " + rot[3]); // Length 4
+					//Debug.Log("rot " + (JointId)i + " " + rot[0] + " " + rot[1] + " " + rot[2] + " " + rot[3]); // Length 4
 					var v = new Vector3(pos[0], -pos[1], pos[2]) * 0.004f;
 					var r = new Quaternion(rot[1], rot[2], rot[3], rot[0]);
 					var obj = debugObjects[i];
@@ -229,6 +230,15 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 	public void poseAccepted_linkToButton()
 	{
 		Debug.Log("pose accepted");
+
+		if (makeFile == null)
+		{
+			makeFile = new MakeFile();
+		}
+
+		makeFile.WriteToFile(JointPositionArea_Text.text);
+		JointPositionArea_Text.text = "";
+
 		CapturedResultsRoot.SetActive(false);
 		showNewBlockman(false);
 		resetSkeletons();
@@ -238,6 +248,9 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 	public void poseDeclined_linkToButton()
 	{
 		Debug.Log("pose declined");
+
+		JointPositionArea_Text.text = "";
+
 		CapturedResultsRoot.SetActive(false);
 		showNewBlockman(false);
 		resetSkeletons();

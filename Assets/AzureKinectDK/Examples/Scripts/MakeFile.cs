@@ -11,7 +11,7 @@ public class MakeFile : MonoBehaviour
 {
     [Header("The path of where the file will be saved to after playing scene.")]
     [Tooltip("Defaults to saving file in Assets folder.")]
-    public string FILE_PATH = "";
+    public string FILE_PATH = "D:\\Repos\\9DegreesOfHuman_Github\\APRLM_SPA\\Assets\\myfile.txt";
 
     [Header("Make a cool name for your file")]
     [Tooltip("Defaults to 'myfile' ")]
@@ -43,40 +43,76 @@ public class MakeFile : MonoBehaviour
     {
         if (++awakeCount == 1) //this is used to detect pauses...
         {
-            InitFileAndFolder();
-        }
+            //InitFileAndFolder();
+			Debug.Log("Init path: " + FILE_PATH);
+		}
     }
 
-    void InitFileAndFolder()
+	bool isWindows()
+	{
+		return Application.platform == RuntimePlatform.WindowsEditor;
+	}
+
+	string getSlash()
+	{
+		string slashMac = "/";
+		string slashWin = "\\";
+		if (Application.platform == RuntimePlatform.WindowsEditor)
+		{
+			//SOURCE_PATH = SOURCE_WINDOWS_PATH;
+			Debug.Log("you're on a pc");
+			return slashWin;
+		}
+		//else if (Application.platform == RuntimePlatform.OSXEditor)
+		//{
+		//	//SOURCE_PATH = SOURCE_OSX_PATH;
+		//	Debug.Log("you're on a mac");
+		//	return slashMac;
+		//}
+		Debug.Log("you're on a mac/linux");
+		return slashMac;
+	}
+
+	string getDataPath()
+	{
+		if (isWindows())
+		{
+			return Application.dataPath.Replace("/", "\\");
+		}
+		return Application.dataPath;
+	}
+
+	void InitFileAndFolder()
     {
-        FILE_NAME = "myfile";
-        FILE_PATH = Application.dataPath + "/" + FILE_NAME;
+		Debug.Log("getDataPath " + getDataPath());
+		FILE_NAME = "myfile.txt";
+        FILE_PATH = getDataPath() + getSlash() + FILE_NAME;
         FILE_DESCRIPTION = "[Insert file description here]";
 
         //You gave the folder a name and the folder a path...
         if(FOLDER_NAME != "" && FOLDER_PATH != "")
         {
-            try
-            {
-               var directory = Directory.CreateDirectory(FOLDER_PATH + "/" + FOLDER_NAME);
+			try
+			{
+				var directory = Directory.CreateDirectory(FOLDER_PATH + getSlash() + FOLDER_NAME);
 
-               FOLDER_PATH = directory.FullName;
-               FILE_PATH = FOLDER_PATH + "/" + FILE_NAME;
-            }
-            catch (Exception e)
-            {
-                print("Failed to make the folder you wanted." + e);
-            }
+				FOLDER_PATH = directory.FullName;
+				FILE_PATH = FOLDER_PATH + getSlash() + FILE_NAME;
+			}
+			catch (Exception e)
+			{
+				print("Failed to make the folder you wanted." + e);
+			}
         }
         //You gave the folder a name, but didn't give it a path...
         else if (FOLDER_NAME != "" && FOLDER_PATH == "")
         {
             try
             {
-                var directory = Directory.CreateDirectory(Application.dataPath + "/" + FOLDER_NAME);
+                var directory = Directory.CreateDirectory(Application.dataPath + getSlash() + FOLDER_NAME);
 
                 FOLDER_PATH = directory.FullName;
-                FILE_PATH = FOLDER_PATH + "/" + FILE_NAME;
+                FILE_PATH = FOLDER_PATH + getSlash() + FILE_NAME;
             }
             catch (Exception e)
             {
@@ -91,8 +127,9 @@ public class MakeFile : MonoBehaviour
     /// </summary>
     public void WriteToFile(string message)
     {
-        //If file doesn't exist at specified path...
-        if (!File.Exists(FILE_PATH))
+		Debug.Log("Write path " + FILE_PATH);
+		//If file doesn't exist at specified path...
+		if (!File.Exists(FILE_PATH))
         {
             print("writing...");
             File.WriteAllText(FILE_PATH, System.DateTime.Now + "\n" + FILE_DESCRIPTION + "\n" + message);
