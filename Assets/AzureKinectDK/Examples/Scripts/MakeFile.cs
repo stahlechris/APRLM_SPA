@@ -11,8 +11,8 @@ public class MakeFile : MonoBehaviour
 {
     [Header("The path of where the file will be saved to after playing scene.")]
     [Tooltip("Defaults to saving file in Assets folder.")]
-    public string FILE_PATH = "D:\\Repos\\9DegreesOfHuman_Github\\APRLM_SPA\\Assets\\myfile.txt";
-
+    public string FILE_PATH = "D:\\Repos\\9DegreesOfHuman_Github\\APRLM_SPA\\Assets\\poses\\myfile.txt";
+	// TODO seems to make a folder within a folder?
     [Header("Make a cool name for your file")]
     [Tooltip("Defaults to 'myfile' ")]
     public string FILE_NAME = "";

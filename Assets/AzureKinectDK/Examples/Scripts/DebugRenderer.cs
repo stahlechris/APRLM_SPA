@@ -23,6 +23,8 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 	public GameObject CapturedResultsRoot;
 	public GameObject blockmanCapturedParent;
 	MakeFile makeFile;
+	public List<Pose> poseList;
+	public Text DisplayCapturedResults_Text;
 
 
 	public bool canUpdate;
@@ -46,6 +48,10 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 			go.SetActive(true);
 		}
         print("Blockman was fetched from GM and set active here in DebugRenderer");
+
+		poseList = GameManager.Instance.poseList;
+		print("Got pose list");
+
 		InitCamera();
     }
 
@@ -68,22 +74,44 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
         canUpdate = true;
     }
 
-    void Update() 
-    {
-        if (canUpdate)
-        {
+	void Update()
+	{
+		if (canUpdate)
+		{
 			streamCameraAsTexture();
-			captureSkeletons();
-			if (skeletons.Count > 4) // and the current scene is CaptureScene
-			{
-				CapturedResultsRoot.SetActive(true);
-				JointPositionArea_Text.text = "";
-				averageOutSkeletons();
-				showNewBlockman(true);
-				//JointPositionArea_Text.text = "hallo you kilt my fader prepare to di";
-			}
+
+			//if (poseList.Count > 0)
+			//{
+			//	Debug.Log("poseList Count: " + poseList.Count);
+			//	foreach (Pose pose in poseList)
+			//	{
+					//Debug.Log("starting " + pose.poseName + ", " + pose.poseName.ToString());
+
+					//DisplayCapturedResults_Text.text = pose.poseName.ToString();
+
+					captureSkeletons();
+					if (skeletons.Count > 4) // and the current scene is CaptureScene
+					{
+						CapturedResultsRoot.SetActive(true);
+						JointPositionArea_Text.text = "";
+						averageOutSkeletons();
+						showNewBlockman(true);
+						//JointPositionArea_Text.text = "hallo you kilt my fader prepare to di";
+					}
+
+			//	};
+			//}
+			//else
+			//{
+			//	Debug.Log("Empty pose list");
+			//}
+
 
 		}//end if(canUpdate) 
+		else
+		{
+			Debug.Log("canUpdate: " + canUpdate);
+		}
 	}//end Update()
 
 	void streamCameraAsTexture()
