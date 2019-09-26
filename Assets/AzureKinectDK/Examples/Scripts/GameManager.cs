@@ -48,7 +48,7 @@ namespace APRLM.Game
             MakeBlockMan();
 			MakeBlockManCaptured();
         }
-        private void Start()
+        void Start()
         {
             Debug.Log("GM start called");
         }
@@ -56,7 +56,7 @@ namespace APRLM.Game
         {
             return poseList;
         }
-        private void CheckSettings()
+        void CheckSettings()
         {
             if(poseList.Count < 1)
             {
@@ -70,12 +70,12 @@ namespace APRLM.Game
             }
         }
 
-		private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+		void OnSceneLoaded(Scene scene, LoadSceneMode mode)
 		{
 			print(scene.name + " loaded");
 		}
 
-		private bool CheckForPoses()
+		bool CheckForPoses()
         {
             if (poseList.Count < 1)
             {
@@ -105,7 +105,7 @@ namespace APRLM.Game
         }
 
 		//todo put block man under this GameManager so they dont dissapear
-		private void MakeBlockMan()
+		void MakeBlockMan()
 		{
 			int size = (int)JointId.Count;
 
@@ -151,7 +151,7 @@ namespace APRLM.Game
 			print("BlockmanCaptured was created in GM");
 		}
 
-		private void OnDisable()//a persistant singleton class will only have this called once, when program ending.
+		void OnDisable()//a persistant singleton class will only have this called once, when program ending.
 		{
 			print("OnDisabled GM");
 		}

@@ -10,16 +10,17 @@ using UnityEngine.UI;
 
 public class DebugRenderer : PersistantSingleton<DebugRenderer>
 {
+    [SerializeField] public List<Skeleton> skeletons = new List<Skeleton>();
+    [SerializeField] GameObject[] blockmanArray;
+    GameObject[] blockman_averagedResults;
+    public GameObject CapturedResultsRoot;
+    public GameObject blockmanCaptured_parent;
+
     Device device;
     BodyTracker tracker;
     Skeleton skeleton;
-    [SerializeField] GameObject[] debugObjects;
     public Renderer renderer;
-    [SerializeField] public List<Skeleton> skeletons = new List<Skeleton>();
-	GameObject[] blockman_averagedResults;
 	public Text JointPositionArea_Text;
-	public GameObject CapturedResultsRoot;
-	public GameObject blockman_averagedResults_parent;
 
     [HideInInspector]public bool canUpdate = false;
 
@@ -36,8 +37,8 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 		{
 			CapturedResultsRoot.SetActive(false);
 		}
-		debugObjects = GameManager.Instance.blockman;
-		foreach (GameObject go in debugObjects)
+		blockmanArray = GameManager.Instance.blockman;
+		foreach (GameObject go in blockmanArray)
 		{
 			go.SetActive(true);
 		}
@@ -47,6 +48,7 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
          * Disable for mac / enable for windows
          * InitCamera();
          */
+        canUpdate = true; //enabled for mac not windows
     }
 
     void InitCamera()
@@ -78,18 +80,28 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 
                CaptureSkeletonsFromCameraFrame();
             */
+            CaptureSkeletonsFromFakeRandomData();
             //todo implement fake data skeletal capturing method here
             if (skeletons.Count > 4)
 			{
-				CapturedResultsRoot.SetActive(true);
+                Debug.Log("we have enough skeletons");
+                //Disable this script's Update loop's logic from running
+                canUpdate = false;
+                //Activate the parent GO containing the averaged position blockman
+                CapturedResultsRoot.SetActive(true);
+                //Clear the text, which is currently holding the last avg vector3 positions of each joint
 				JointPositionArea_Text.text = "";
+                //Find the avg of the current joints of the 5 skele's captured
 				FindAverageSkeletalPosition();
-				EnableBlockman(true);
+                //Enable capturedBlockman, disable first blockman
+				EnableBlockman(true); 
 			}
 
 		}//end if(canUpdate) 
 	}//end Update()
 
+    /*
+     * Diabled for mac, enabled for windows
 	void StreamCameraAsTexture()
 	{
 		//this streams camera output as a texture to a plane in the scene
@@ -106,6 +118,31 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 			}
 		}
 	}
+    */
+    void CaptureSkeletonsFromFakeRandomData()
+    {
+        //0 Make a new object that will make us a skeleton
+        MakeRandomSkeleton makeSkeleton = new MakeRandomSkeleton();
+        //1 fill this.skeleton with a skeleton
+        this.skeleton = makeSkeleton.MakeSkeleton();
+        //2 add the skele to this list
+        skeletons.Add(this.skeleton);
+        //pull out each joint from the skele, transform the data to assign to a vector3 and quaternion
+        for (var i = 0; i < (int)JointId.Count; i++)
+        {
+            var joint = this.skeleton.Joints[i];
+            var pos = joint.Position;
+            Debug.Log("pos: " + (JointId)i + " " + pos[0] + " " + pos[1] + " " + pos[2]);
+            var rot = joint.Orientation;
+            Debug.Log("rot " + (JointId)i + " " + rot[0] + " " + rot[1] + " " + rot[2] + " " + rot[3]); // Length 4
+            var v = new Vector3(pos[0], -pos[1], pos[2]) * 0.004f;
+            var r = new Quaternion(rot[1], rot[2], rot[3], rot[0]);
+            var obj = blockmanArray[i];
+            obj.transform.SetPositionAndRotation(v, r);
+        }
+    }
+    /*
+     * Disabled for mac, enabled for windows
     //Gets skeletal data from frames, pulls individual joint data from a skeleton, applies pos/rot to blocks representing joints
     void CaptureSkeletonsFromCameraFrame()
 	{
@@ -127,21 +164,22 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 					Debug.Log("rot " + (JointId)i + " " + rot[0] + " " + rot[1] + " " + rot[2] + " " + rot[3]); // Length 4
 					var v = new Vector3(pos[0], -pos[1], pos[2]) * 0.004f;
 					var r = new Quaternion(rot[1], rot[2], rot[3], rot[0]);
-					var obj = debugObjects[i];
+					var obj = blockmanArray[i];
 					obj.transform.SetPositionAndRotation(v, r);
 				}
 			}
 		}
 	}
-
+    */
 	void FindAverageSkeletalPosition()
 	{
-		Debug.Log("creating blockman 2 stuff");
+		Debug.Log("activating blockman captured blocks");
+        //blockman_averagedResults is the array of GO's
 		blockman_averagedResults = GameManager.Instance.blockmanCaptured;
-		foreach (GameObject go in blockman_averagedResults)
-		{
-			go.SetActive(true);
-		}
+		//foreach (GameObject go in blockman_averagedResults)
+		//{
+		//	go.SetActive(true);
+		//}
 
 		// skeletons is a List<Skeleton> of size 5
 		for (int i = 0; i < (int)JointId.Count; i++)
@@ -152,7 +190,8 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 			{
 				float[] pos = skeletons[j].Joints[i].Position;
 
-				Vector3 posV3 = new Vector3(pos[0], -pos[1], pos[2]) * 0.004f;
+                //for fake data, you need to multiply by something bigger than .3 on windows we did * .004
+				Vector3 posV3 = new Vector3(pos[0], -pos[1], pos[2]) * 0.4f;
 				positionsOfSameJointPositions.Add(posV3);
 
 			}
@@ -164,31 +203,31 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 			var jointCube = blockman_averagedResults[i];
 			jointCube.transform.SetPositionAndRotation(averageOfSingleJointI, rotationOfFirstSkeleton);
 
-			//now that blockman2 joint is set, format and print that data
+			//now that blockman_averagedResults joint is set, format and print that data
 			JointPositionArea_Text.text += JointDataStringFormatter.formatJointDataToText(averageOfSingleJointI, (JointId)i);
 		}
-
-		Debug.Log("we have enough skeletons");
-		//Disable this script's Update loop's logic from running
-		canUpdate = false;
 	}
 
 	void EnableBlockman(bool enable)
 	{
-		if (blockman_averagedResults_parent == null)
+        //make a parent GO for captured(averaged) blockman
+		if (blockmanCaptured_parent == null)
 		{
-			blockman_averagedResults_parent = new GameObject();
-		}
-
+            //make an empty parent obj to store blockman in hierarchy
+			blockmanCaptured_parent = new GameObject();
+            //give that empty parent a name
+            blockmanCaptured_parent.name = "BlockmanCaptured";
+        }
+        //turn blockman1 off
 		foreach (GameObject go in GameManager.Instance.blockman)
 		{
-			go.transform.SetParent(blockman_averagedResults_parent.transform);
 			go.SetActive(!enable);
 		}
-
+        //turn blockman2 on and set its blocks into the parent object
 		foreach (GameObject go in GameManager.Instance.blockmanCaptured)
 		{
-			go.SetActive(enable);
+            go.transform.SetParent(blockmanCaptured_parent.transform);
+            go.SetActive(enable);
 		}
 		//blockmanCapturedParent.transform.Translate(new Vector3());
 	}
@@ -197,7 +236,8 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 	{
 		skeletons.Clear();
 	}
-
+    /*
+     * Enabled for mac, disabled for windows
     private void OnDisable()
     {
         //todo test if only called once at the end of the program, if so, renable the below
@@ -213,16 +253,24 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 			device.Dispose();
 		}
 	}
-
+*/
 	public void PoseAccepted_linkToButton()
 	{
-		Debug.Log("pose accepted");
-		CapturedResultsRoot.SetActive(false);
+		Debug.Log("pose accepted. Writing data to file...");
+        WriteDataToFile();
+        CapturedResultsRoot.SetActive(false);
 		EnableBlockman(false);
 		ClearSkeletonsList();
 		canUpdate = true;
 	}
-
+    void WriteDataToFile()
+    {
+        //this assumes makeFile.cs is dragged onto the same obj as DebugRenderer.cs
+        //0 get reference to the file making script
+        MakeFile makeFile = GetComponent<MakeFile>();
+        //1 give makeFile a string that it will write to a .txt file
+        makeFile.WriteToFile(JointPositionArea_Text.text);
+    }
 	public void PoseDeclined_linkToButton()
 	{
 		Debug.Log("pose declined");

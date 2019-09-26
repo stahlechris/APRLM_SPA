@@ -7,7 +7,7 @@ using Microsoft.Azure.Kinect.Sensor;
 /// </summary>
 ///
 [ExecuteInEditMode]
-public class MakeFile : MonoBehaviour
+public class MakeFile : MonoBehaviour  //TODO this is making a folder within the folder you created and putting the file in the sub folder
 {
     [Header("The path of where the file will be saved to after playing scene.")]
     [Tooltip("Defaults to saving file in Assets folder.")]
@@ -17,7 +17,7 @@ public class MakeFile : MonoBehaviour
     [Tooltip("Defaults to 'myfile' ")]
     public string FILE_NAME = "";
 
-    [Header("Hey bro?")]
+    [Header("Hey bro??")]
     [Tooltip("Defaults to '[insert description here]'.")]
     public string FILE_DESCRIPTION = "";
 
@@ -61,7 +61,8 @@ public class MakeFile : MonoBehaviour
                var directory = Directory.CreateDirectory(FOLDER_PATH + "/" + FOLDER_NAME);
 
                FOLDER_PATH = directory.FullName;
-               FILE_PATH = FOLDER_PATH + "/" + FILE_NAME;
+                FILE_PATH = FOLDER_PATH + "/" + FILE_NAME; //if you don't include the FILE_NAME here, you will get a permissions error
+                print("successfully made a folder path and name based on the names you gave both");
             }
             catch (Exception e)
             {
@@ -77,6 +78,8 @@ public class MakeFile : MonoBehaviour
 
                 FOLDER_PATH = directory.FullName;
                 FILE_PATH = FOLDER_PATH + "/" + FILE_NAME;
+                print("successfully made a folder path and name based on the name you gave the folder");
+
             }
             catch (Exception e)
             {
