@@ -61,7 +61,7 @@ public class MakeFile : MonoBehaviour  //TODO this is making a folder within the
                var directory = Directory.CreateDirectory(FOLDER_PATH + "/" + FOLDER_NAME);
 
                FOLDER_PATH = directory.FullName;
-                FILE_PATH = FOLDER_PATH + "/" + FILE_NAME; //if you don't include the FILE_NAME here, you will get a permissions error
+                FILE_PATH = FOLDER_PATH + "/" + FILE_NAME; //todo bug: sometimes your folder will be created, then created again inside of that
                 print("successfully made a folder path and name based on the names you gave both");
             }
             catch (Exception e)
@@ -92,7 +92,7 @@ public class MakeFile : MonoBehaviour  //TODO this is making a folder within the
     //Declare a MakeFile file = new MakeFile(); then...
     //file.WriteToFile("49");
     /// </summary>
-    public void WriteToFile(string message)
+    public void WriteToFile(string message)  //TODO make a check to see if folder exists. (aka so we don't have to delete manually after every test capture)
     {
         //If file doesn't exist at specified path...
         if (!File.Exists(FILE_PATH))

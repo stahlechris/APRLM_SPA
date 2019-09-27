@@ -95,10 +95,7 @@ namespace APRLM.Game
                 //Load another scene on different thread
                 SceneManager.LoadSceneAsync(scene,LoadSceneMode.Additive);
             }
-			else
-			{
-
-			}
+            else
             {
                 EditorApplication.isPlaying = false;
             }

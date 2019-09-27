@@ -236,6 +236,7 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 	{
 		skeletons.Clear();
 	}
+
     /*
      * Enabled for mac, disabled for windows
     private void OnDisable()
@@ -254,6 +255,11 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 		}
 	}
 */
+
+    public void RecordPose_LinkedToToggle()
+    {
+        //todo capture skele's on record pose press
+    }
 	public void PoseAccepted_linkToButton()
 	{
 		Debug.Log("pose accepted. Writing data to file...");
@@ -262,6 +268,9 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 		EnableBlockman(false);
 		ClearSkeletonsList();
 		canUpdate = true;
+        //todo disable results screen
+        //todo
+
 	}
     void WriteDataToFile()
     {
