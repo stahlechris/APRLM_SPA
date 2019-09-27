@@ -23,6 +23,8 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 	public Text JointPositionArea_Text;
 
     [HideInInspector]public bool canUpdate = false;
+    public UnityEngine.UI.Image recordPoseToggleImage; //dragged in manually
+    public Toggle recordPoseToggle;//dragged in manually
 
     protected override void Awake()
     {
@@ -69,36 +71,36 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
         renderer = GetComponent<Renderer>();
         canUpdate = true;
     }
+    //9.27 disabled update to implement record pose button functinality
+ //   void Update() 
+ //   {
+ //       if (canUpdate)
+ //       {
+ //           /*
+ //            * Disable for mac / enable for windows
+ //              StreamCameraAsTexture();
 
-    void Update() 
-    {
-        if (canUpdate)
-        {
-            /*
-             * Disable for mac / enable for windows
-               StreamCameraAsTexture();
+ //              CaptureSkeletonsFromCameraFrame();
+ //           */
+ //           CaptureSkeletonsFromFakeRandomData();
+ //           //todo implement fake data skeletal capturing method here
+ //           if (skeletons.Count > 4)
+	//		{
+ //               Debug.Log("we have enough skeletons");
+ //               //Disable this script's Update loop's logic from running
+ //               canUpdate = false;
+ //               //Activate the parent GO containing the averaged position blockman
+ //               CapturedResultsRoot.SetActive(true);
+ //               //Clear the text, which is currently holding the last avg vector3 positions of each joint
+	//			JointPositionArea_Text.text = "";
+ //               //Find the avg of the current joints of the 5 skele's captured
+	//			FindAverageSkeletalPosition();
+ //               //Enable capturedBlockman, disable first blockman
+	//			EnableBlockman(true); 
+	//		}
 
-               CaptureSkeletonsFromCameraFrame();
-            */
-            CaptureSkeletonsFromFakeRandomData();
-            //todo implement fake data skeletal capturing method here
-            if (skeletons.Count > 4)
-			{
-                Debug.Log("we have enough skeletons");
-                //Disable this script's Update loop's logic from running
-                canUpdate = false;
-                //Activate the parent GO containing the averaged position blockman
-                CapturedResultsRoot.SetActive(true);
-                //Clear the text, which is currently holding the last avg vector3 positions of each joint
-				JointPositionArea_Text.text = "";
-                //Find the avg of the current joints of the 5 skele's captured
-				FindAverageSkeletalPosition();
-                //Enable capturedBlockman, disable first blockman
-				EnableBlockman(true); 
-			}
-
-		}//end if(canUpdate) 
-	}//end Update()
+	//	}//end if(canUpdate) 
+	//}//end Update()
 
     /*
      * Diabled for mac, enabled for windows
@@ -258,7 +260,25 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 
     public void RecordPose_LinkedToToggle()
     {
+        Color recordingRed = new Color(255, 0, 0);
+        Color disabledGrey = new Color(211,211,211);
+
+        ColorBlock cb = recordPoseToggle.colors;
         //todo capture skele's on record pose press
+        //todo change color of toggle by detecting presses
+        if (!recordPoseToggle.isOn)
+        {
+            //then we are pressing it off, change selected color to disabled grey
+            cb.selectedColor = disabledGrey;
+            print("Recording stopped!");
+        }
+        else
+        {
+            //then we are pressing it on, change selected color to recording red
+            cb.selectedColor = recordingRed;
+            print("recording started!");
+        }
+        recordPoseToggle.colors = cb;
     }
 	public void PoseAccepted_linkToButton()
 	{
