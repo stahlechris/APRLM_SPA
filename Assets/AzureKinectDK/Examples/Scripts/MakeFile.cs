@@ -141,6 +141,25 @@ public class MakeFile : MonoBehaviour
 		return filePath;
 	}
 
+	string getFileName()
+	{
+		string fileName = FILE_NAME.Length > 0 ? FILE_NAME : "myfile";
+		string ymd_hms = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+		fileName = fileName + ymd_hms;
+		//Debug.Log(DateTime.Now);                        // 09/28/2019 17:05:12
+		//Debug.Log(DateTime.Now.ToString());             // 9/28/2019 5:05:12 PM
+		//Debug.Log(DateTime.Now.ToShortDateString());    // 9/28/2019
+		//Debug.Log(DateTime.Now.ToLongDateString());     // Saturday, September 28, 2019
+		//Debug.Log(DateTime.Now.ToShortTimeString());    // 5:05 PM
+		//Debug.Log(DateTime.Now.ToLongTimeString());     // 5:05:12 PM
+		//Debug.Log(DateTime.Now.ToUniversalTime());      // 09/28/2019 22:05:12
+		//Debug.Log(DateTime.Now.ToLocalTime());          // 09/28/2019 17:05:12
+		//Debug.Log(DateTime.Now.ToString("yyyyMMdd_HHmmss"));// 20190928_170923
+
+
+		return fileName;
+	}
+
 	string getFileLocation()
 	{
 		string fileLoc = string.Join("", pathFolderFileExt);
@@ -155,7 +174,7 @@ public class MakeFile : MonoBehaviour
 		pathFolderFileExt[0] = PATH.Length > 0 ? PATH : getDataPath();
 		pathFolderFileExt[1] = getSlash(); // trailing slash
 		pathFolderFileExt[2] = getFolderName();
-		pathFolderFileExt[3] = FILE_NAME.Length > 0 ? FILE_NAME : "myfile";
+		pathFolderFileExt[3] = getFileName();
 		pathFolderFileExt[4] = FILE_EXTENSION;
 
 		if (FOLDER_NAME.Length > 0)
@@ -183,21 +202,22 @@ public class MakeFile : MonoBehaviour
     /// </summary>
     public void WriteToFile(string message)
     {
+		InitFileAndFolder();
 		print("Write path " + getFileLocation());
 		//If file doesn't exist at specified path...
-		if (!File.Exists(getFileLocation()))
-        {
+		//if (!File.Exists(getFileLocation()))
+  //      {
             print("writing...");
             File.WriteAllText(getFileLocation(), System.DateTime.Now + "\n" + FILE_DESCRIPTION + "\n" + message);
             print("wrote " + System.DateTime.Now + "\n" + FILE_DESCRIPTION + "\n" + message);
             //TODO FORMAT DATA , GET RANDOM DATA FROM CREATING A SKELETON REAL QUICK
-        }
+        //}
         //If file does exist at that path...aka we have called this method twice in one session(which we will be doing, bro)
-        else if (File.Exists(getFileLocation()))
-        {
-            File.AppendAllText(getFileLocation(), "\n" + message);
-            print("wrote " + message);
-        }
+        //else if (File.Exists(getFileLocation()))
+        //{
+        //    File.AppendAllText(getFileLocation(), "\n" + message);
+        //    print("wrote " + message);
+        //}
         //if we already have joint data written here that means we either forgot to move the folder/file or we are trying to rewrite it
         //else if()//we have more than 26 lines of data, it means we have written joint data to this thing
     }
