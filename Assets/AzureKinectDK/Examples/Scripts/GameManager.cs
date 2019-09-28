@@ -50,7 +50,7 @@ namespace APRLM.Game
         }
         private void Start()
         {
-            Debug.Log("GM start called");
+            print("GM start called");
         }
         public List<Pose> GetPoseList()
         {
@@ -60,7 +60,7 @@ namespace APRLM.Game
         {
             if(poseList.Count < 1)
             {
-                Debug.Log("!No poses were dragged into the Pose List!");
+                print("!No poses were dragged into the Pose List!");
                 EditorApplication.isPlaying = false;
             }
             else
@@ -79,7 +79,7 @@ namespace APRLM.Game
         {
             if (poseList.Count < 1)
             {
-                Debug.Log("!No poses were dragged into the Pose List!");
+                print("!No poses were dragged into the Pose List!");
                 return false;
             }
             else
@@ -159,6 +159,11 @@ namespace APRLM.Game
 		public void toggleRecording_linkedToToggle()
 		{
 
+		}
+
+		private void print(string msg)
+		{
+			//Debug.Log(msg);
 		}
 
 		//public void LoadScene(Scene scene, 

@@ -22,10 +22,9 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 	public Text JointPositionArea_Text;
 	public GameObject CapturedResultsRoot;
 	public GameObject blockmanCapturedParent;
-	MakeFile makeFile;
+	//MakeFile makeFile;
 	public List<Pose> poseList;
 	public Text DisplayCapturedResults_Text;
-
 
 	public bool canUpdate;
 
@@ -82,10 +81,10 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 
 			//if (poseList.Count > 0)
 			//{
-			//	Debug.Log("poseList Count: " + poseList.Count);
+			//	print("poseList Count: " + poseList.Count);
 			//	foreach (Pose pose in poseList)
 			//	{
-					//Debug.Log("starting " + pose.poseName + ", " + pose.poseName.ToString());
+					//print("starting " + pose.poseName + ", " + pose.poseName.ToString());
 
 					//DisplayCapturedResults_Text.text = pose.poseName.ToString();
 
@@ -103,14 +102,14 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 			//}
 			//else
 			//{
-			//	Debug.Log("Empty pose list");
+			//	print("Empty pose list");
 			//}
 
 
 		}//end if(canUpdate) 
 		else
 		{
-			Debug.Log("canUpdate: " + canUpdate);
+			print("canUpdate: " + canUpdate);
 		}
 	}//end Update()
 
@@ -147,9 +146,9 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 				{
 					var joint = this.skeleton.Joints[i];
 					var pos = joint.Position;
-					//Debug.Log("pos: " + (JointId)i + " " + pos[0] + " " + pos[1] + " " + pos[2]);
+					//print("pos: " + (JointId)i + " " + pos[0] + " " + pos[1] + " " + pos[2]);
 					var rot = joint.Orientation;
-					//Debug.Log("rot " + (JointId)i + " " + rot[0] + " " + rot[1] + " " + rot[2] + " " + rot[3]); // Length 4
+					//print("rot " + (JointId)i + " " + rot[0] + " " + rot[1] + " " + rot[2] + " " + rot[3]); // Length 4
 					var v = new Vector3(pos[0], -pos[1], pos[2]) * 0.004f;
 					var r = new Quaternion(rot[1], rot[2], rot[3], rot[0]);
 					var obj = debugObjects[i];
@@ -161,7 +160,7 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 
 	void averageOutSkeletons()
 	{
-		Debug.Log("creating blockman 2 stuff");
+		print("creating blockman 2 stuff");
 		blockman2 = GameManager.Instance.blockmanCaptured;
 		foreach (GameObject go in blockman2)
 		{
@@ -193,7 +192,7 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 			JointPositionArea_Text.text += JointDataStringFormatter.formatJointDataToText(averageOfSingleJointI, (JointId)i);
 		}
 
-		Debug.Log("we have enough skeletons");
+		print("we have enough skeletons");
 		//GameManager.Instance.currentState = GameState.CaptureCompleted;
 		//Disable this Update loop's logic from running
 		canUpdate = false;
@@ -257,14 +256,11 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 
 	public void poseAccepted_linkToButton()
 	{
-		Debug.Log("pose accepted");
+		print("pose accepted");
 
-		if (makeFile == null)
-		{
-			makeFile = new MakeFile();
-		}
-
-		makeFile.WriteToFile(JointPositionArea_Text.text);
+		MakeFile.Instance
+			//.getInstance()
+			.WriteToFile(JointPositionArea_Text.text);
 		JointPositionArea_Text.text = "";
 
 		CapturedResultsRoot.SetActive(false);
@@ -275,7 +271,7 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 
 	public void poseDeclined_linkToButton()
 	{
-		Debug.Log("pose declined");
+		print("pose declined");
 
 		JointPositionArea_Text.text = "";
 
@@ -283,6 +279,11 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 		showNewBlockman(false);
 		resetSkeletons();
 		canUpdate = true;
+	}
+
+	private void print(string msg)
+	{
+		//Debug.Log(msg);
 	}
 
 }

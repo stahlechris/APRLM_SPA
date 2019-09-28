@@ -1048,11 +1048,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: adee47d35219b461ea5e40f9d764ea6c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  FILE_PATH: D:\Repos\9DegreesOfHuman_Github\APRLM_SPA\Assets\myfile
-  FILE_NAME: myfile.txt
+  PATH: D:\Repos\9DegreesOfHuman_Github\APRLM_SPA\Assets
+  FILE_NAME: myfile
   FILE_DESCRIPTION: '[Insert file description here]'
-  FOLDER_NAME: 
-  FOLDER_PATH: 
+  FOLDER_NAME: poses
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
