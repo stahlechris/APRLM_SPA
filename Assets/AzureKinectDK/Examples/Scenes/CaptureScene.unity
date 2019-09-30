@@ -132,6 +132,8 @@ GameObject:
   - component: {fileID: 161344601}
   - component: {fileID: 161344600}
   - component: {fileID: 161344599}
+  - component: {fileID: 161344604}
+  - component: {fileID: 161344603}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -222,6 +224,42 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &161344603
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 161344598}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 0, b: 0, a: 0.29411766}
+  m_RaycastTarget: 0
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &161344604
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 161344598}
+  m_CullTransparentMesh: 0
 --- !u!1 &191002475
 GameObject:
   m_ObjectHideFlags: 0
@@ -231,13 +269,14 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 191002476}
+  - component: {fileID: 191002477}
   m_Layer: 5
   m_Name: CountdownParent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &191002476
 RectTransform:
   m_ObjectHideFlags: 0
@@ -255,9 +294,21 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_AnchoredPosition: {x: -294.6, y: -431.86}
+  m_SizeDelta: {x: 1392.3, y: 216.28}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &191002477
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 191002475}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 885a5e918d7c545d88bd4b7ffd1c15f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &274076468
 GameObject:
   m_ObjectHideFlags: 0
@@ -842,8 +893,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 608.3, y: -267.9}
-  m_SizeDelta: {x: -1216.6, y: -535.8}
+  m_AnchoredPosition: {x: 680.8, y: -267.9}
+  m_SizeDelta: {x: -1361.6, y: -535.8}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &805128864
 MonoBehaviour:
@@ -933,6 +984,10 @@ MonoBehaviour:
   renderer: {fileID: 907009271}
   JointPositionArea_Text: {fileID: 1350830850}
   canUpdate: 0
+  recordPoseToggleImage: {fileID: 274076470}
+  recordPoseToggle: {fileID: 1507161417}
+  countdownParent: {fileID: 191002475}
+  countdownText: {fileID: 970055771}
 --- !u!23 &907009271
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1009,7 +1064,7 @@ MonoBehaviour:
   FILE_NAME: myfile
   FILE_DESCRIPTION: '[Insert file description here]'
   FOLDER_NAME: RandomSkeletalDataFolder
-  FOLDER_PATH: /Users/stahle/Unity2019/APRLM_SPA/Assets/
+  FOLDER_PATH: /Users/stahle/Unity2019/APRLM_SPA/Assets/RandomSkeletalDataFolder
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
@@ -1127,8 +1182,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 160, y: 30}
+  m_AnchoredPosition: {x: -0.0024719, y: -0.0000076294}
+  m_SizeDelta: {x: 1392.3, y: 216.28}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &970055771
 MonoBehaviour:
@@ -1150,11 +1205,11 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 14
+    m_FontSize: 160
     m_FontStyle: 0
     m_BestFit: 0
-    m_MinSize: 10
-    m_MaxSize: 40
+    m_MinSize: 1
+    m_MaxSize: 160
     m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
@@ -1834,7 +1889,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 907009270}
-        m_MethodName: TESTAAJSHDFLJASDHFLKAJSHDFLKAJSDHFKJH
+        m_MethodName: RecordPose_LinkedToToggle
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2041,7 +2096,7 @@ MonoBehaviour:
     m_MinSize: 3
     m_MaxSize: 40
     m_Alignment: 4
-    m_AlignByGeometry: 0
+    m_AlignByGeometry: 1
     m_RichText: 1
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
@@ -2165,8 +2220,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.000022888, y: -51}
-  m_SizeDelta: {x: 703.4, y: 273.4}
+  m_AnchoredPosition: {x: -9.8002, y: -51}
+  m_SizeDelta: {x: 312, y: 442.2}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1860433567
 GameObject:
@@ -2203,7 +2258,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 703.4, y: 273.4}
+  m_SizeDelta: {x: 312, y: 442.2}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1860433569
 MonoBehaviour:
@@ -2231,7 +2286,7 @@ MonoBehaviour:
     m_MinSize: 3
     m_MaxSize: 40
     m_Alignment: 0
-    m_AlignByGeometry: 0
+    m_AlignByGeometry: 1
     m_RichText: 1
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0

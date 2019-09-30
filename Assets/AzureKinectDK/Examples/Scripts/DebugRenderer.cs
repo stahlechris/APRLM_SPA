@@ -7,6 +7,7 @@ using Stahle.Utility;
 using APRLM.Game;
 using APRLM.Utilities;
 using UnityEngine.UI;
+using System.Collections;
 
 public class DebugRenderer : PersistantSingleton<DebugRenderer>
 {
@@ -25,6 +26,8 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
     [HideInInspector]public bool canUpdate = false;
     public UnityEngine.UI.Image recordPoseToggleImage; //dragged in manually
     public Toggle recordPoseToggle;//dragged in manually
+    public GameObject countdownParent;//manually dragged in
+    public Text countdownText; //manually dragged in
 
     protected override void Awake()
     {
@@ -71,36 +74,34 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
         renderer = GetComponent<Renderer>();
         canUpdate = true;
     }
-    //9.27 disabled update to implement record pose button functinality
- //   void Update() 
- //   {
- //       if (canUpdate)
- //       {
- //           /*
- //            * Disable for mac / enable for windows
- //              StreamCameraAsTexture();
+    void Update()
+    {
+        if (canUpdate)
+        {
+            /*
+             * Disable for mac / enable for windows
+               StreamCameraAsTexture();
 
- //              CaptureSkeletonsFromCameraFrame();
- //           */
- //           CaptureSkeletonsFromFakeRandomData();
- //           //todo implement fake data skeletal capturing method here
- //           if (skeletons.Count > 4)
-	//		{
- //               Debug.Log("we have enough skeletons");
- //               //Disable this script's Update loop's logic from running
- //               canUpdate = false;
- //               //Activate the parent GO containing the averaged position blockman
- //               CapturedResultsRoot.SetActive(true);
- //               //Clear the text, which is currently holding the last avg vector3 positions of each joint
-	//			JointPositionArea_Text.text = "";
- //               //Find the avg of the current joints of the 5 skele's captured
-	//			FindAverageSkeletalPosition();
- //               //Enable capturedBlockman, disable first blockman
-	//			EnableBlockman(true); 
-	//		}
+               CaptureSkeletonsFromCameraFrame();
+            */
+            //CaptureSkeletonsFromFakeRandomData();   //9.27 disabled update to implement record pose button functinality
+            if (skeletons.Count > 4)
+            {
+                Debug.Log("we have enough skeletons");
+                //Disable this script's Update loop's logic from running
+                canUpdate = false;
+                //Activate the parent GO containing the averaged position blockman
+                CapturedResultsRoot.SetActive(true);
+                //Clear the text, which is currently holding the last avg vector3 positions of each joint
+                JointPositionArea_Text.text = "";
+                //Find the avg of the current joints of the 5 skele's captured
+                FindAverageSkeletalPosition();
+                //Enable capturedBlockman, disable first blockman
+                EnableBlockman(true);
+            }
 
-	//	}//end if(canUpdate) 
-	//}//end Update()
+        }//end if(canUpdate) 
+    }//end Update()
 
     /*
      * Diabled for mac, enabled for windows
@@ -264,8 +265,7 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
         Color disabledGrey = new Color(211,211,211);
 
         ColorBlock cb = recordPoseToggle.colors;
-        //todo capture skele's on record pose press
-        //todo change color of toggle by detecting presses
+
         if (!recordPoseToggle.isOn)
         {
             //then we are pressing it off, change selected color to disabled grey
@@ -279,17 +279,37 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
             print("recording started!");
         }
         recordPoseToggle.colors = cb;
+
+        StartCoroutine(StartCountdown());
     }
-	public void PoseAccepted_linkToButton()
+
+    IEnumerator StartCountdown()
+    {
+        countdownParent.SetActive(true);
+        countdownText.text = "3...";
+        yield return new WaitForSeconds(.5f);
+        countdownText.text += "2...";
+        yield return new WaitForSeconds(.5f);
+        countdownText.text += "1...";
+        yield return new WaitForSeconds(.5f);
+        countdownParent.SetActive(false);
+        for (int i = 0; i < 5; i++)
+        {
+            CaptureSkeletonsFromFakeRandomData();
+        }
+    }
+
+    public void PoseAccepted_linkToButton()
 	{
 		Debug.Log("pose accepted. Writing data to file...");
+        countdownText.text = "";
         WriteDataToFile();
         CapturedResultsRoot.SetActive(false);
 		EnableBlockman(false);
 		ClearSkeletonsList();
 		canUpdate = true;
         //todo disable results screen
-        //todo
+        //todo take off the pose from the pose list
 
 	}
     void WriteDataToFile()
@@ -302,10 +322,15 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
     }
 	public void PoseDeclined_linkToButton()
 	{
-		Debug.Log("pose declined");
-		CapturedResultsRoot.SetActive(false);
+		Debug.Log("pose declined. clearing captured data");
+        countdownText.text = "";
+        //hide the captured results panel
+        CapturedResultsRoot.SetActive(false);
+        //disable captured blockman, enable live blockman
 		EnableBlockman(false);
+        //reset the skeletons list that we just captured
 		ClearSkeletonsList();
+        //let the update run again to capture skeles
 		canUpdate = true;
 	}
 
