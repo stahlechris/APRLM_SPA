@@ -28,6 +28,7 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
     public Toggle recordPoseToggle;//dragged in manually
     public GameObject countdownParent;//manually dragged in
     public Text countdownText; //manually dragged in
+    public Text displayCapturedPose; //manually dragged in
 
     protected override void Awake()
     {
@@ -98,6 +99,11 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
                 FindAverageSkeletalPosition();
                 //Enable capturedBlockman, disable first blockman
                 EnableBlockman(true);
+                //display what pose was captured
+                //"Displaying captured results for: " + [pose]
+                //clear
+                displayCapturedPose.text = "";
+                displayCapturedPose.text += "Displaying averaged joint positions in: " + GameManager.Instance.currentPose.name;
             }
 
         }//end if(canUpdate) 
@@ -232,7 +238,8 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
             go.transform.SetParent(blockmanCaptured_parent.transform);
             go.SetActive(enable);
 		}
-		//blockmanCapturedParent.transform.Translate(new Vector3());
+        //move it slightly to the left for visibility
+        blockmanCaptured_parent.transform.Translate(new Vector3(-1.5f,0,0));
 	}
 
 	void ClearSkeletonsList()
@@ -260,34 +267,40 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 */
 
     public void RecordPose_LinkedToToggle()
+        //todo second time pressing this button it will say "recording stopped!", it should say started if we want to clikc the button every time
+        //so we should mark this toggle as off again after we complete a pose
     {
-        Color recordingRed = new Color(255, 0, 0);
-        Color disabledGrey = new Color(211,211,211);
-
-        ColorBlock cb = recordPoseToggle.colors;
-
-        if (!recordPoseToggle.isOn)
+        if (GameManager.Instance.poseList.Count > 0)
         {
-            //then we are pressing it off, change selected color to disabled grey
-            cb.selectedColor = disabledGrey;
-            print("Recording stopped!");
-        }
-        else
-        {
-            //then we are pressing it on, change selected color to recording red
-            cb.selectedColor = recordingRed;
-            print("recording started!");
-        }
-        recordPoseToggle.colors = cb;
+            Color recordingRed = new Color(255, 0, 0);
+            Color disabledGrey = new Color(211, 211, 211);
 
-        StartCoroutine(StartCountdown());
+            ColorBlock cb = recordPoseToggle.colors;
+
+            if (!recordPoseToggle.isOn)
+            {
+                //then we are pressing it off, change selected color to disabled grey
+                cb.selectedColor = disabledGrey;
+                print("Recording stopped!");
+            }
+            else
+            {
+                //then we are pressing it on, change selected color to recording red
+                cb.selectedColor = recordingRed;
+                print("recording started!");
+            }
+            //assign the toggle the color
+            recordPoseToggle.colors = cb;
+
+            StartCoroutine(StartCountdown());
+        }
     }
 
     IEnumerator StartCountdown()
     {
         countdownParent.SetActive(true);
         countdownText.text = "3...";
-        yield return new WaitForSeconds(.5f);
+        yield return new WaitForSeconds(.5f); //!sped up for testing!
         countdownText.text += "2...";
         yield return new WaitForSeconds(.5f);
         countdownText.text += "1...";
@@ -308,9 +321,8 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 		EnableBlockman(false);
 		ClearSkeletonsList();
 		canUpdate = true;
-        //todo disable results screen
-        //todo take off the pose from the pose list
 
+        GameManager.Instance.MarkCurrentPoseCompleted();
 	}
     void WriteDataToFile()
     {
@@ -318,7 +330,7 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
         //0 get reference to the file making script
         MakeFile makeFile = GetComponent<MakeFile>();
         //1 give makeFile a string that it will write to a .txt file
-        makeFile.WriteToFile(JointPositionArea_Text.text);
+        makeFile.WriteToFile(displayCapturedPose.text +"\n"+ JointPositionArea_Text.text);
     }
 	public void PoseDeclined_linkToButton()
 	{
@@ -332,6 +344,6 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 		ClearSkeletonsList();
         //let the update run again to capture skeles
 		canUpdate = true;
+        //todo clear the poses text
 	}
-
 }

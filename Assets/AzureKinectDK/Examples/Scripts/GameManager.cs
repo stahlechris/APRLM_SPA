@@ -66,7 +66,8 @@ namespace APRLM.Game
             else
             {
                 //currentPose gets set to first Pose in the list
-                currentPose = poseList[0];
+                currentPoseIndex = 0;
+                currentPose = poseList[currentPoseIndex];
             }
         }
 
@@ -87,7 +88,24 @@ namespace APRLM.Game
                 return true;
             }
         }
+        public void MarkCurrentPoseCompleted()
+        {
+            //transfer the first line of pose text to capturedPose text
+            //check if there's another pose in in the poselist
+            if(currentPoseIndex + 1 < poseList.Count)
+            {
+                //if there is, then increment the index
+                currentPoseIndex++;
+                //assign currentPose to next
+                currentPose = poseList[currentPoseIndex];
+                //todo highlight the new current pose
+            }
+            else
+            {
+                print("no more poses in list!");
+            }
 
+        }
         public void LoadSceneAdditively(int scene)
         {
             if (CheckForPoses())
@@ -100,7 +118,7 @@ namespace APRLM.Game
                 EditorApplication.isPlaying = false;
             }
         }
-
+        
 		//todo put block man under this GameManager so they dont dissapear
 		void MakeBlockMan()
 		{
@@ -152,12 +170,5 @@ namespace APRLM.Game
 		{
 			print("OnDisabled GM");
 		}
-
-		public void toggleRecording_linkedToToggle()
-		{
-
-		}
-
-		//public void LoadScene(Scene scene, 
 	}
 }

@@ -9,34 +9,48 @@ public class PosePanel : MonoBehaviour
 	[Tooltip("Dragged in manually!")]
 	public Text poseText;
 
-	private void Start()
+    public Text capturedPoseText;//dragged in manually
+    string firstLineCached;
+    string firstLineUpdated;
+    void Start()
 	{
 		//Request pose data from GM
 		ParsePoseList(GameManager.Instance.poseList);
-        HighlightCurrentPose();
-
     }
 
-	private void ParsePoseList(List<Pose> poseList)
+	void ParsePoseList(List<Pose> poseList)
 	{
 		foreach (Pose p in poseList)
 		{
 			poseText.text += p.poseName.ToString() + "\n";
 		}
 	}
-    //todo highlight the current pose we are about to capture / capturing
-    private void HighlightCurrentPose()
+    //todo this doesn't doesn't work when we go to add the next succesfull pose
+    public void MarkPoseAsSuccesfullyCaptured_LinkedToButton()//(accept pose) save data to file button
     {
-        //get the first line(first pose)
-        string firstLineCached = poseText.text.Substring(0, poseText.text.IndexOf("\n", System.StringComparison.CurrentCulture));
-        string firstLineUpdated = firstLineCached;
-        //add html color shit to change it
-        firstLineUpdated = "<color='red'>" + firstLineUpdated + "</color>";
-        print(firstLineUpdated); //succesfully is turned red
-
-        //assign the firstline back with the color html code
-        //todo doesn't work, just delete first line then add new one from index 0 
-        poseText.text = poseText.text.Replace(firstLineCached,firstLineUpdated);
-        print(firstLineCached);
+        //take the first line from pose text and put it in captured pose text
+        capturedPoseText.text += firstLineCached + "\n";
+        //delete firstline from pose text
+        poseText.text = poseText.text.Replace(firstLineUpdated, "");
+        //trim the whitespace away
+        poseText.text = poseText.text.Trim();
+        //clear the caches (CASH-SHAY'S...don't @ me)
+        firstLineCached = "";
+        firstLineUpdated = "";
     }
+    public void HighlightCurrentPose_LinkedToButton()//record pose button
+    {
+        //todo this doesn't highlight during the next pose capture, it is getting the "" we want to it to get the next line
+        //get the first line(first pose)
+        //todo i think this doesn't work when theres only one pose in there
+        //add an if check to see if a newline character is there or keep up with pose list.Count to know when we are on the last line
+        firstLineCached = poseText.text.Substring(0, poseText.text.IndexOf("\n", System.StringComparison.CurrentCulture));
+        //bug this is gonna get just the "" the second and subsequent times
+        firstLineUpdated = firstLineCached;
+        //add html code to change the color of this string
+        firstLineUpdated = "<color='red'>" + firstLineUpdated + "</color>";
+        //assign the firstline back with the color html code (strings are immutable, bro)
+        poseText.text = poseText.text.Replace(firstLineCached,firstLineUpdated);
+    }
+
 }
