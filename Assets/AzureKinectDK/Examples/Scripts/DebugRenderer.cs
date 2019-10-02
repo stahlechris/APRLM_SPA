@@ -54,7 +54,6 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
          * Disable for mac / enable for windows
          * InitCamera();
          */
-        canUpdate = true; //enabled for mac not windows
     }
 
     void InitCamera()
@@ -73,7 +72,6 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
         //initialize a tracker with the calibration we just made
         this.tracker = BodyTracker.Create(calibration);
         renderer = GetComponent<Renderer>();
-        canUpdate = true;
     }
     void Update()
     {
@@ -85,7 +83,8 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 
                CaptureSkeletonsFromCameraFrame();
             */
-            //CaptureSkeletonsFromFakeRandomData();   //9.27 disabled update to implement record pose button functinality
+            //CaptureSkeletonsFromFakeRandomData();
+            CaptureSkeletonsFromFakeRandomData();
             if (skeletons.Count > 4)
             {
                 Debug.Log("we have enough skeletons");
@@ -309,13 +308,15 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
         countdownText.text += "1...";
         yield return new WaitForSeconds(.5f);
         countdownParent.SetActive(false);
-        for (int i = 0; i < 5; i++)
-        {
-            CaptureSkeletonsFromFakeRandomData();
-        }
+
+        canUpdate = true;
+        //for (int i = 0; i < 5; i++)
+        //{
+        //    CaptureSkeletonsFromFakeRandomData();
+        //}
     }
 
-    public void PoseAccepted_linkToButton()//todo mess with .interactable to prevent click abuse
+    public void PoseAccepted_linkToButton()
     {
 		Debug.Log("pose accepted. Writing data to file...");
         countdownText.text = "";
@@ -323,7 +324,7 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
         CapturedResultsRoot.SetActive(false);
 		EnableBlockman(false);
 		ClearSkeletonsList();
-		canUpdate = true;
+		//canUpdate = true;
 
         GameManager.Instance.MarkCurrentPoseCompleted();
 	}
@@ -335,7 +336,7 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
         //1 give makeFile a string that it will write to a .txt file
         makeFile.WriteToFile(displayCapturedPose.text +"\n"+ JointPositionArea_Text.text);
     }
-	public void PoseDeclined_linkToButton() //todo mess with .interactable to prevent click abuse
+	public void PoseDeclined_linkToButton() 
 	{
 		Debug.Log("pose declined. clearing captured data");
         countdownText.text = "";
@@ -346,7 +347,7 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
         //reset the skeletons list that we just captured
 		ClearSkeletonsList();
         //let the update run again to capture skeles
-		canUpdate = true;
+		//canUpdate = true;
         //todo clear the poses text
 	}
 }
