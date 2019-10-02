@@ -29,7 +29,7 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
     public GameObject countdownParent;//manually dragged in
     public Text countdownText; //manually dragged in
     public Text displayCapturedPose; //manually dragged in
-
+    public Text RecordNextPoseToggleText; //manually dragged in 
     protected override void Awake()
     {
 		print("DebugRenderer Awake");
@@ -185,10 +185,6 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 		Debug.Log("activating blockman captured blocks");
         //blockman_averagedResults is the array of GO's
 		blockman_averagedResults = GameManager.Instance.blockmanCaptured;
-		//foreach (GameObject go in blockman_averagedResults)
-		//{
-		//	go.SetActive(true);
-		//}
 
 		// skeletons is a List<Skeleton> of size 5
 		for (int i = 0; i < (int)JointId.Count; i++)
@@ -266,7 +262,10 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 	}
 */
 
-    public void RecordPose_LinkedToToggle()
+        //it's a toggle because it's either recording or not recording
+
+
+    public void RecordPose_LinkedToToggle()//todo mess with .interactable to prevent click abuse
         //todo second time pressing this button it will say "recording stopped!", it should say started if we want to clikc the button every time
         //so we should mark this toggle as off again after we complete a pose
     {
@@ -281,12 +280,16 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
             {
                 //then we are pressing it off, change selected color to disabled grey
                 cb.selectedColor = disabledGrey;
+                //todo implement a text change to "stop recording"
+                RecordNextPoseToggleText.text = "Record Next Pose";
+
                 print("Recording stopped!");
             }
             else
             {
                 //then we are pressing it on, change selected color to recording red
                 cb.selectedColor = recordingRed;
+                RecordNextPoseToggleText.text = "Stop Recording";
                 print("recording started!");
             }
             //assign the toggle the color
@@ -312,8 +315,8 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
         }
     }
 
-    public void PoseAccepted_linkToButton()
-	{
+    public void PoseAccepted_linkToButton()//todo mess with .interactable to prevent click abuse
+    {
 		Debug.Log("pose accepted. Writing data to file...");
         countdownText.text = "";
         WriteDataToFile();
@@ -332,7 +335,7 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
         //1 give makeFile a string that it will write to a .txt file
         makeFile.WriteToFile(displayCapturedPose.text +"\n"+ JointPositionArea_Text.text);
     }
-	public void PoseDeclined_linkToButton()
+	public void PoseDeclined_linkToButton() //todo mess with .interactable to prevent click abuse
 	{
 		Debug.Log("pose declined. clearing captured data");
         countdownText.text = "";

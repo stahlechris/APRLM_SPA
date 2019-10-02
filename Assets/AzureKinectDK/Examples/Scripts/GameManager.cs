@@ -102,7 +102,8 @@ namespace APRLM.Game
             }
             else
             {
-                print("no more poses in list!");
+                print("no more poses in list!"); //we want the app to stop after this, or at least disable the record pose
+
             }
 
         }
