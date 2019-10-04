@@ -94,16 +94,15 @@ namespace APRLM.Game
             //check if there's another pose in in the poselist
             if(currentPoseIndex + 1 < poseList.Count)
             {
+                currentPose.isCaptured = true;
                 //if there is, then increment the index
                 currentPoseIndex++;
                 //assign currentPose to next
                 currentPose = poseList[currentPoseIndex];
-                //todo highlight the new current pose
             }
             else
             {
                 print("no more poses in list!"); //we want the app to stop after this, or at least disable the record pose
-
             }
 
         }

@@ -27,6 +27,21 @@ public class PosePanel : MonoBehaviour
 		}
 	}
 
+    void UpdatePoseList(List<Pose> poseList)
+    {
+        foreach (Pose p in poseList)
+        {
+            if(p.isCaptured)
+            {
+                //move it over to the completed text box
+            }
+            else
+            {
+
+            }
+        }
+    }
+
     //todo mess with .interactable to prevent click abuse
     //todo this doesn't doesn't work when we go to add the next succesfull pose
     public void MarkPoseAsSuccesfullyCaptured_LinkedToButton()//(accept pose) save data to file button

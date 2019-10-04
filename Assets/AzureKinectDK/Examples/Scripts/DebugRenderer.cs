@@ -260,9 +260,7 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 		}
 	}
 */
-
         //it's a toggle because it's either recording or not recording
-
 
     public void RecordPose_LinkedToToggle()//todo mess with .interactable to prevent click abuse
         //todo second time pressing this button it will say "recording stopped!", it should say started if we want to clikc the button every time
@@ -284,11 +282,11 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 
                 print("Recording stopped!");
             }
-            else
+            else //comes here first time we press
             {
                 //then we are pressing it on, change selected color to recording red
                 cb.selectedColor = recordingRed;
-                RecordNextPoseToggleText.text = "Stop Recording";
+                RecordNextPoseToggleText.text = "Stop Recording"; //todo implement killswitch
                 print("recording started!");
             }
             //assign the toggle the color
