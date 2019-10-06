@@ -31,7 +31,9 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
     public Text countdownText; //manually dragged in
     public Text displayCapturedPose; //manually dragged in
     public Text RecordNextPoseToggleText; //manually dragged in 
-    protected override void Awake()
+	public RawImage test;
+
+	protected override void Awake()
     {
 		print("DebugRenderer Awake");
         base.Awake();
@@ -51,11 +53,9 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 		}
         print("Blockman was fetched from GM and set active here in DebugRenderer");
 
-        /*
-         * Disable for mac / enable for windows
-         * InitCamera();
-         */
-    }
+		//Disable for mac / enable for windows
+		InitCamera();
+	}
 
     void InitCamera()
     {
@@ -78,15 +78,12 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
     {
         if (canUpdate)
         {
-            /*
-             * Disable for mac / enable for windows
-               StreamCameraAsTexture();
-
-               CaptureSkeletonsFromCameraFrame();
-            */
-            //CaptureSkeletonsFromFakeRandomData();
-            CaptureSkeletonsFromFakeRandomData();
-            if (skeletons.Count > 4)
+			//Disable for mac / enable for windows
+			StreamCameraAsTexture();
+			CaptureSkeletonsFromCameraFrame();
+			
+			//CaptureSkeletonsFromFakeRandomData();
+			if (skeletons.Count > 4)
             {
                 Debug.Log("we have enough skeletons");
                 //Disable this script's Update loop's logic from running
@@ -109,10 +106,10 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
         }//end if(canUpdate) 
     }//end Update()
 
-    /*
-     * Diabled for mac, enabled for windows
+    //Diabled for mac, enabled for windows
 	void StreamCameraAsTexture()
 	{
+		Texture2D texture;
 		//this streams camera output as a texture to a plane in the scene
 		using (Capture capture = device.GetCapture())
 		{
@@ -123,37 +120,42 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 				Texture2D tex = new Texture2D(color.WidthPixels, color.HeightPixels, TextureFormat.BGRA32, false);
 				tex.LoadRawTextureData(color.GetBufferCopy());
 				tex.Apply();
-				renderer.material.mainTexture = tex;
+				//renderer.material.mainTexture = tex;
+				//test.mainTexture = tex;
+				texture = tex;
+				//test.texture = tex as Texture2D;
+				test.texture = (Texture2D)tex;
 			}
 		}
 	}
-    */
-    void CaptureSkeletonsFromFakeRandomData()
-    {
-        //0 Make a new object that will make us a skeleton
-        MakeRandomSkeleton makeSkeleton = new MakeRandomSkeleton();
-        //1 fill this.skeleton with a skeleton
-        this.skeleton = makeSkeleton.MakeSkeleton();
-        //2 add the skele to this list
-        skeletons.Add(this.skeleton);
-        //pull out each joint from the skele, transform the data to assign to a vector3 and quaternion
-        for (var i = 0; i < (int)JointId.Count; i++)
-        {
-            var joint = this.skeleton.Joints[i];
-            var pos = joint.Position;
-            Debug.Log("pos: " + (JointId)i + " " + pos[0] + " " + pos[1] + " " + pos[2]);
-            var rot = joint.Orientation;
-            Debug.Log("rot " + (JointId)i + " " + rot[0] + " " + rot[1] + " " + rot[2] + " " + rot[3]); // Length 4
-            var v = new Vector3(pos[0], -pos[1], pos[2]) * 0.004f;
-            var r = new Quaternion(rot[1], rot[2], rot[3], rot[0]);
-            var obj = blockmanArray[i];
-            obj.transform.SetPositionAndRotation(v, r);
-        }
-    }
-    /*
-     * Disabled for mac, enabled for windows
-    //Gets skeletal data from frames, pulls individual joint data from a skeleton, applies pos/rot to blocks representing joints
-    void CaptureSkeletonsFromCameraFrame()
+
+	// Disabled for windows, enabled for mac
+	//void CaptureSkeletonsFromFakeRandomData()
+ //   {
+ //       //0 Make a new object that will make us a skeleton
+ //       MakeRandomSkeleton makeSkeleton = new MakeRandomSkeleton();
+ //       //1 fill this.skeleton with a skeleton
+ //       this.skeleton = makeSkeleton.MakeSkeleton();
+ //       //2 add the skele to this list
+ //       skeletons.Add(this.skeleton);
+ //       //pull out each joint from the skele, transform the data to assign to a vector3 and quaternion
+ //       for (var i = 0; i < (int)JointId.Count; i++)
+ //       {
+ //           var joint = this.skeleton.Joints[i];
+ //           var pos = joint.Position;
+ //           Debug.Log("pos: " + (JointId)i + " " + pos[0] + " " + pos[1] + " " + pos[2]);
+ //           var rot = joint.Orientation;
+ //           Debug.Log("rot " + (JointId)i + " " + rot[0] + " " + rot[1] + " " + rot[2] + " " + rot[3]); // Length 4
+ //           var v = new Vector3(pos[0], -pos[1], pos[2]) * 0.004f;
+ //           var r = new Quaternion(rot[1], rot[2], rot[3], rot[0]);
+ //           var obj = blockmanArray[i];
+ //           obj.transform.SetPositionAndRotation(v, r);
+ //       }
+ //   }
+
+	// Disabled for mac, enabled for windows
+	//Gets skeletal data from frames, pulls individual joint data from a skeleton, applies pos/rot to blocks representing joints
+	void CaptureSkeletonsFromCameraFrame()
 	{
 		using (var frame = tracker.PopResult())
 		{
@@ -179,7 +181,7 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 			}
 		}
 	}
-    */
+
 	void FindAverageSkeletalPosition()
 	{
 		Debug.Log("activating blockman captured blocks");
@@ -246,9 +248,8 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 		skeletons.Clear();
 	}
 
-    /*
-     * Enabled for mac, disabled for windows
-    private void OnDisable()
+	// Enabled for windows, disabled for mac
+	private void OnDisable()
     {
         //todo test if only called once at the end of the program, if so, renable the below
         print("DebugRenderer onDisable was called");
@@ -263,7 +264,6 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 			device.Dispose();
 		}
 	}
-*/
         //it's a toggle because it's either recording or not recording
 
 

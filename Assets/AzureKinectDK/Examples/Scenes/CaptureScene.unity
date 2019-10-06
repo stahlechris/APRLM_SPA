@@ -217,6 +217,7 @@ RectTransform:
   - {fileID: 1507161416}
   - {fileID: 298368307}
   - {fileID: 191002476}
+  - {fileID: 1148346158}
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1114,6 +1115,7 @@ MonoBehaviour:
   countdownText: {fileID: 970055771}
   displayCapturedPose: {fileID: 1555623773}
   RecordNextPoseToggleText: {fileID: 552993546}
+  test: {fileID: 1148346159}
 --- !u!23 &907009271
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1186,11 +1188,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: adee47d35219b461ea5e40f9d764ea6c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  FILE_PATH: /Users/stahle/Unity2019/APRLM_SPA/Assets/RandomSkeletalDataFolder/RandomSkeletalDataFolder/RandomSkeletalDataFolder/myfile
+  FILE_PATH: D:\Users\stahle\Unity2019\APRLM_SPA\Assets\RandomSkeletalDataFolder\RandomSkeletalDataFolder\RandomSkeletalDataFolder\RandomSkeletalDataFolder\RandomSkeletalDataFolder/myfile
   FILE_NAME: myfile
   FILE_DESCRIPTION: '[Insert file description here]'
   FOLDER_NAME: RandomSkeletalDataFolder
-  FOLDER_PATH: /Users/stahle/Unity2019/APRLM_SPA/Assets/RandomSkeletalDataFolder/RandomSkeletalDataFolder/RandomSkeletalDataFolder
+  FOLDER_PATH: D:\Users\stahle\Unity2019\APRLM_SPA\Assets\RandomSkeletalDataFolder\RandomSkeletalDataFolder\RandomSkeletalDataFolder\RandomSkeletalDataFolder\RandomSkeletalDataFolder
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
@@ -1350,6 +1352,76 @@ CanvasRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 970055769}
+  m_CullTransparentMesh: 0
+--- !u!1 &1148346157
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1148346158}
+  - component: {fileID: 1148346160}
+  - component: {fileID: 1148346159}
+  m_Layer: 5
+  m_Name: PanelChrisTest
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1148346158
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1148346157}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 161344602}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -630.6, y: -289.1}
+  m_SizeDelta: {x: -1261.2, y: -578.3}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1148346159
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1148346157}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 0
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Texture: {fileID: 0}
+  m_UVRect:
+    serializedVersion: 2
+    x: 0
+    y: -1
+    width: 1
+    height: -1
+--- !u!222 &1148346160
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1148346157}
   m_CullTransparentMesh: 0
 --- !u!1 &1206069332
 GameObject:
