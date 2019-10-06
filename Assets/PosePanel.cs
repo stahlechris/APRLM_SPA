@@ -43,7 +43,7 @@ public class PosePanel : MonoBehaviour
     }
 
     //todo mess with .interactable to prevent click abuse
-    //todo this doesn't doesn't work when we go to add the next succesfull pose
+    //todo this doesn't doesn't work when we go to add the next succesfull pose 
     public void MarkPoseAsSuccesfullyCaptured_LinkedToButton()//(accept pose) save data to file button
     {
         //take the first line from pose text and put it in captured pose text
@@ -60,6 +60,9 @@ public class PosePanel : MonoBehaviour
     //todo mess with .interactable to prevent click abuse
     public void HighlightCurrentPose_LinkedToButton()//record pose button 
     {
+
+        //todo change to if else structure
+        //if(poseText.text.IndexOf("\n",System.StringComparison.CurrentCulture) > -1)
         //get the first line(first pose)
         //todo i think this doesn't work when theres only one pose in there
         try
