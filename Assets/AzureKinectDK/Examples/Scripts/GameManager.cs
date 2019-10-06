@@ -48,7 +48,7 @@ namespace APRLM.Game
             MakeBlockMan();
 			MakeBlockManCaptured();
         }
-        private void Start()
+        void Start()
         {
             Debug.Log("GM start called");
         }
@@ -56,7 +56,7 @@ namespace APRLM.Game
         {
             return poseList;
         }
-        private void CheckSettings()
+        void CheckSettings()
         {
             if(poseList.Count < 1)
             {
@@ -66,16 +66,17 @@ namespace APRLM.Game
             else
             {
                 //currentPose gets set to first Pose in the list
-                currentPose = poseList[0];
+                currentPoseIndex = 0;
+                currentPose = poseList[currentPoseIndex];
             }
         }
 
-		private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+		void OnSceneLoaded(Scene scene, LoadSceneMode mode)
 		{
 			print(scene.name + " loaded");
 		}
 
-		private bool CheckForPoses()
+		bool CheckForPoses()
         {
             if (poseList.Count < 1)
             {
@@ -87,7 +88,24 @@ namespace APRLM.Game
                 return true;
             }
         }
+        public void MarkCurrentPoseCompleted()
+        {
+            //transfer the first line of pose text to capturedPose text
+            //check if there's another pose in in the poselist
+            if(currentPoseIndex + 1 < poseList.Count)
+            {
+                currentPose.isCaptured = true;
+                //if there is, then increment the index
+                currentPoseIndex++;
+                //assign currentPose to next
+                currentPose = poseList[currentPoseIndex];
+            }
+            else
+            {
+                print("no more poses in list!"); //we want the app to stop after this, or at least disable the record pose
+            }
 
+        }
         public void LoadSceneAdditively(int scene)
         {
             if (CheckForPoses())
@@ -95,17 +113,14 @@ namespace APRLM.Game
                 //Load another scene on different thread
                 SceneManager.LoadSceneAsync(scene,LoadSceneMode.Additive);
             }
-			else
-			{
-
-			}
+            else
             {
                 EditorApplication.isPlaying = false;
             }
         }
-
+        
 		//todo put block man under this GameManager so they dont dissapear
-		private void MakeBlockMan()
+		void MakeBlockMan()
 		{
 			int size = (int)JointId.Count;
 
@@ -151,16 +166,9 @@ namespace APRLM.Game
 			print("BlockmanCaptured was created in GM");
 		}
 
-		private void OnDisable()//a persistant singleton class will only have this called once, when program ending.
+		void OnDisable()//a persistant singleton class will only have this called once, when program ending.
 		{
 			print("OnDisabled GM");
 		}
-
-		public void toggleRecording_linkedToToggle()
-		{
-
-		}
-
-		//public void LoadScene(Scene scene, 
 	}
 }

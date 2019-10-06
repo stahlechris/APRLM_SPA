@@ -22,5 +22,7 @@ public class Pose : ScriptableObject
     public PoseName poseName;
     //A Pose has a type: Standing pose
     public PoseType poseType;
+    //A Pose has a status
+    public bool isCaptured;
     //Eventually, when we make a pose match game, a pose will have a 'perfect score' position to match
 }
