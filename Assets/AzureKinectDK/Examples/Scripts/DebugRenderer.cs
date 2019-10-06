@@ -7,26 +7,30 @@ using Stahle.Utility;
 using APRLM.Game;
 using APRLM.Utilities;
 using UnityEngine.UI;
+using System.Collections;
 
 public class DebugRenderer : PersistantSingleton<DebugRenderer>
 {
+    [SerializeField] public List<Skeleton> skeletons = new List<Skeleton>();
+    [SerializeField] GameObject[] blockmanArray;
+    GameObject[] blockman_averagedResults;
+    public GameObject CapturedResultsRoot;
+    public GameObject blockmanCaptured_parent;
+
     Device device;
     BodyTracker tracker;
     Skeleton skeleton;
-    [SerializeField]
-    GameObject[] debugObjects;
     public Renderer renderer;
-    [SerializeField]
-    public List<Skeleton> skeletons = new List<Skeleton>();
-	GameObject[] blockman2;
 	public Text JointPositionArea_Text;
-	public GameObject CapturedResultsRoot;
-	public GameObject blockmanCapturedParent;
 
 
-
-	public bool canUpdate;
-
+    [HideInInspector]public bool canUpdate = false;
+    public UnityEngine.UI.Image recordPoseToggleImage; //dragged in manually
+    public Toggle recordPoseToggle;//dragged in manually
+    public GameObject countdownParent;//manually dragged in
+    public Text countdownText; //manually dragged in
+    public Text displayCapturedPose; //manually dragged in
+    public Text RecordNextPoseToggleText; //manually dragged in 
     protected override void Awake()
     {
 		print("DebugRenderer Awake");
@@ -40,16 +44,20 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 		{
 			CapturedResultsRoot.SetActive(false);
 		}
-		debugObjects = GameManager.Instance.blockman;
-		foreach (GameObject go in debugObjects)
+		blockmanArray = GameManager.Instance.blockman;
+		foreach (GameObject go in blockmanArray)
 		{
 			go.SetActive(true);
 		}
         print("Blockman was fetched from GM and set active here in DebugRenderer");
-		InitCamera();
+
+        /*
+         * Disable for mac / enable for windows
+         * InitCamera();
+         */
     }
 
-    private void InitCamera()
+    void InitCamera()
     {
         this.device = Device.Open(0);
 		var config = new DeviceConfiguration
@@ -65,28 +73,45 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
         //initialize a tracker with the calibration we just made
         this.tracker = BodyTracker.Create(calibration);
         renderer = GetComponent<Renderer>();
-        canUpdate = true;
     }
-
-    void Update() 
+    void Update()
     {
         if (canUpdate)
         {
-			streamCameraAsTexture();
-			captureSkeletons();
-			if (skeletons.Count > 4) // and the current scene is CaptureScene
-			{
-				CapturedResultsRoot.SetActive(true);
-				JointPositionArea_Text.text = "";
-				averageOutSkeletons();
-				showNewBlockman(true);
-				//JointPositionArea_Text.text = "hallo you kilt my fader prepare to di";
-			}
+            /*
+             * Disable for mac / enable for windows
+               StreamCameraAsTexture();
 
-		}//end if(canUpdate) 
-	}//end Update()
+               CaptureSkeletonsFromCameraFrame();
+            */
+            //CaptureSkeletonsFromFakeRandomData();
+            CaptureSkeletonsFromFakeRandomData();
+            if (skeletons.Count > 4)
+            {
+                Debug.Log("we have enough skeletons");
+                //Disable this script's Update loop's logic from running
+                canUpdate = false;
+                //Activate the parent GO containing the averaged position blockman
+                CapturedResultsRoot.SetActive(true);
+                //Clear the text, which is currently holding the last avg vector3 positions of each joint
+                JointPositionArea_Text.text = "";
+                //Find the avg of the current joints of the 5 skele's captured
+                FindAverageSkeletalPosition();
+                //Enable capturedBlockman, disable first blockman
+                EnableBlockman(true);
+                //display what pose was captured
+                //"Displaying captured results for: " + [pose]
+                //clear
+                displayCapturedPose.text = "";
+                displayCapturedPose.text += "Displaying averaged joint positions in: " + GameManager.Instance.currentPose.name;
+            }
 
-	void streamCameraAsTexture()
+        }//end if(canUpdate) 
+    }//end Update()
+
+    /*
+     * Diabled for mac, enabled for windows
+	void StreamCameraAsTexture()
 	{
 		//this streams camera output as a texture to a plane in the scene
 		using (Capture capture = device.GetCapture())
@@ -102,10 +127,34 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 			}
 		}
 	}
-
-	void captureSkeletons()
+    */
+    void CaptureSkeletonsFromFakeRandomData()
+    {
+        //0 Make a new object that will make us a skeleton
+        MakeRandomSkeleton makeSkeleton = new MakeRandomSkeleton();
+        //1 fill this.skeleton with a skeleton
+        this.skeleton = makeSkeleton.MakeSkeleton();
+        //2 add the skele to this list
+        skeletons.Add(this.skeleton);
+        //pull out each joint from the skele, transform the data to assign to a vector3 and quaternion
+        for (var i = 0; i < (int)JointId.Count; i++)
+        {
+            var joint = this.skeleton.Joints[i];
+            var pos = joint.Position;
+            Debug.Log("pos: " + (JointId)i + " " + pos[0] + " " + pos[1] + " " + pos[2]);
+            var rot = joint.Orientation;
+            Debug.Log("rot " + (JointId)i + " " + rot[0] + " " + rot[1] + " " + rot[2] + " " + rot[3]); // Length 4
+            var v = new Vector3(pos[0], -pos[1], pos[2]) * 0.004f;
+            var r = new Quaternion(rot[1], rot[2], rot[3], rot[0]);
+            var obj = blockmanArray[i];
+            obj.transform.SetPositionAndRotation(v, r);
+        }
+    }
+    /*
+     * Disabled for mac, enabled for windows
+    //Gets skeletal data from frames, pulls individual joint data from a skeleton, applies pos/rot to blocks representing joints
+    void CaptureSkeletonsFromCameraFrame()
 	{
-		//this gets skeleton data from frames and pulls individual joint data from the skeleton to apply to blocks that represent joints
 		using (var frame = tracker.PopResult())
 		{
 			Debug.LogFormat("{0} bodies found.", frame.NumBodies);
@@ -124,21 +173,18 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 					Debug.Log("rot " + (JointId)i + " " + rot[0] + " " + rot[1] + " " + rot[2] + " " + rot[3]); // Length 4
 					var v = new Vector3(pos[0], -pos[1], pos[2]) * 0.004f;
 					var r = new Quaternion(rot[1], rot[2], rot[3], rot[0]);
-					var obj = debugObjects[i];
+					var obj = blockmanArray[i];
 					obj.transform.SetPositionAndRotation(v, r);
 				}
 			}
 		}
 	}
-
-	void averageOutSkeletons()
+    */
+	void FindAverageSkeletalPosition()
 	{
-		Debug.Log("creating blockman 2 stuff");
-		blockman2 = GameManager.Instance.blockmanCaptured;
-		foreach (GameObject go in blockman2)
-		{
-			go.SetActive(true);
-		}
+		Debug.Log("activating blockman captured blocks");
+        //blockman_averagedResults is the array of GO's
+		blockman_averagedResults = GameManager.Instance.blockmanCaptured;
 
 		// skeletons is a List<Skeleton> of size 5
 		for (int i = 0; i < (int)JointId.Count; i++)
@@ -149,7 +195,8 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 			{
 				float[] pos = skeletons[j].Joints[i].Position;
 
-				Vector3 posV3 = new Vector3(pos[0], -pos[1], pos[2]) * 0.004f;
+                //for fake data, you need to multiply by something bigger than .3 on windows we did * .004
+				Vector3 posV3 = new Vector3(pos[0], -pos[1], pos[2]) * 0.4f;
 				positionsOfSameJointPositions.Add(posV3);
 
 			}
@@ -158,63 +205,49 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 			float[] rot = skeletons[0].Joints[i].Orientation;
 			Quaternion rotationOfFirstSkeleton = new Quaternion(rot[1], rot[2], rot[3], rot[0]);
 
-			var jointCube = blockman2[i];
+			var jointCube = blockman_averagedResults[i];
 			jointCube.transform.SetPositionAndRotation(averageOfSingleJointI, rotationOfFirstSkeleton);
 
 
-			//now that blockman2 joint is set, format and print that data
 			JointPositionArea_Text.text += JointDataStringFormatter.formatJointDataToText(averageOfSingleJointI, (JointId)i);
 
 
 
 		}
-
-		Debug.Log("we have enough skeletons");
-		//GameManager.Instance.currentState = GameState.CaptureCompleted;
-		//Disable this Update loop's logic from running
-		canUpdate = false;
-		//GameManager.Instance.LoadScene((int)SceneEnums.Scenes.GetReady);
 	}
 
-	void showNewBlockman(bool shouldShow)
+	void EnableBlockman(bool enable)
 	{
-		if (blockmanCapturedParent == null)
+        //make a parent GO for captured(averaged) blockman
+		if (blockmanCaptured_parent == null)
 		{
-			blockmanCapturedParent = new GameObject();
-		}
-
+            //make an empty parent obj to store blockman in hierarchy
+			blockmanCaptured_parent = new GameObject();
+            //give that empty parent a name
+            blockmanCaptured_parent.name = "BlockmanCaptured";
+        }
+        //turn blockman1 off
 		foreach (GameObject go in GameManager.Instance.blockman)
 		{
-			go.transform.SetParent(blockmanCapturedParent.transform);
-			go.SetActive(!shouldShow);
+			go.SetActive(!enable);
 		}
-
+        //turn blockman2 on and set its blocks into the parent object
 		foreach (GameObject go in GameManager.Instance.blockmanCaptured)
 		{
-			go.SetActive(shouldShow);
+            go.transform.SetParent(blockmanCaptured_parent.transform);
+            go.SetActive(enable);
 		}
-
-		//blockmanCapturedParent.transform.Translate(new Vector3());
+        //move it slightly to the left for visibility
+        blockmanCaptured_parent.transform.Translate(new Vector3(-1.5f,0,0));
 	}
 
-	void resetSkeletons()
+	void ClearSkeletonsList()
 	{
 		skeletons.Clear();
 	}
 
-	public void TESTAAJSHDFLJASDHFLKAJSHDFLKAJSDHFKJH()
-	{
-		//enable canUpdate for skeleton capturing
-		canUpdate = true;
-		// load new additive scene/panel
-
-		// load skeleton into new blockman
-		//GameManager.MakeBlockManCaptured();
-		// does this look ok yes no
-		// no, redo
-		// yes, save and indicate moving to next pose?
-	}
-
+    /*
+     * Enabled for mac, disabled for windows
     private void OnDisable()
     {
         //todo test if only called once at the end of the program, if so, renable the below
@@ -230,25 +263,95 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 			device.Dispose();
 		}
 	}
+*/
+        //it's a toggle because it's either recording or not recording
 
 
-	public void poseAccepted_linkToButton()
-	{
-		Debug.Log("pose accepted");
-		CapturedResultsRoot.SetActive(false);
-		showNewBlockman(false);
-		resetSkeletons();
-		canUpdate = true;
+    public void RecordPose_LinkedToToggle()//todo mess with .interactable to prevent click abuse
+        //todo second time pressing this button it will say "recording stopped!", it should say started if we want to clikc the button every time
+        //so we should mark this toggle as off again after we complete a pose
+    {
+        if (GameManager.Instance.poseList.Count > 0)
+        {
+            Color recordingRed = new Color(255, 0, 0);
+            Color disabledGrey = new Color(211, 211, 211);
+
+            ColorBlock cb = recordPoseToggle.colors;
+
+            if (!recordPoseToggle.isOn)
+            {
+                //then we are pressing it off, change selected color to disabled grey
+                cb.selectedColor = disabledGrey;
+                //todo implement a text change to "stop recording"
+                RecordNextPoseToggleText.text = "Record Next Pose";
+
+                print("Recording stopped!");
+            }
+            else //comes here first time we press
+            {
+                //then we are pressing it on, change selected color to recording red
+                cb.selectedColor = recordingRed;
+                RecordNextPoseToggleText.text = "Stop Recording"; //todo implement killswitch
+                print("recording started!");
+            }
+            //assign the toggle the color
+            recordPoseToggle.colors = cb;
+
+            StartCoroutine(StartCountdown());
+        }
+    }
+
+
+    IEnumerator StartCountdown()
+    {
+        countdownParent.SetActive(true);
+        countdownText.text = "3...";
+        yield return new WaitForSeconds(.5f); //!sped up for testing!
+        countdownText.text += "2...";
+        yield return new WaitForSeconds(.5f);
+        countdownText.text += "1...";
+        yield return new WaitForSeconds(.5f);
+        countdownParent.SetActive(false);
+
+        canUpdate = true;
+        //for (int i = 0; i < 5; i++)
+        //{
+        //    CaptureSkeletonsFromFakeRandomData();
+        //}
+    }
+
+    public void PoseAccepted_linkToButton()
+    {
+		Debug.Log("pose accepted. Writing data to file...");
+        countdownText.text = "";
+        WriteDataToFile();
+        CapturedResultsRoot.SetActive(false);
+		EnableBlockman(false);
+		ClearSkeletonsList();
+		//canUpdate = true;
+
+        GameManager.Instance.MarkCurrentPoseCompleted();
 	}
-
-	public void poseDeclined_linkToButton()
+    void WriteDataToFile()
+    {
+        //this assumes makeFile.cs is dragged onto the same obj as DebugRenderer.cs
+        //0 get reference to the file making script
+        MakeFile makeFile = GetComponent<MakeFile>();
+        //1 give makeFile a string that it will write to a .txt file
+        makeFile.WriteToFile(displayCapturedPose.text +"\n"+ JointPositionArea_Text.text);
+    }
+	public void PoseDeclined_linkToButton() 
 	{
-		Debug.Log("pose declined");
-		CapturedResultsRoot.SetActive(false);
-		showNewBlockman(false);
-		resetSkeletons();
-		canUpdate = true;
+		Debug.Log("pose declined. clearing captured data");
+        countdownText.text = "";
+        //hide the captured results panel
+        CapturedResultsRoot.SetActive(false);
+        //disable captured blockman, enable live blockman
+		EnableBlockman(false);
+        //reset the skeletons list that we just captured
+		ClearSkeletonsList();
+        //let the update run again to capture skeles
+		//canUpdate = true;
+        //todo clear the poses text
 	}
-
-
 }
