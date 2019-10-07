@@ -60,6 +60,7 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 		print("Got pose list");
 
 		//Disable for mac / enable for windows
+
 		InitCamera();
     }
 
