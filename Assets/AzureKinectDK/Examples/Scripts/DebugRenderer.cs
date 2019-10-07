@@ -16,10 +16,12 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
     GameObject[] blockman_averagedResults;
     //public GameObject CapturedResultsRoot; // duplicate from merge conflict
     public GameObject blockmanCaptured_parent;
-
+#if UNITY_EDITOR_WIN
     Device device;
     BodyTracker tracker;
+#endif
     Skeleton skeleton;
+
     public Renderer renderer;
 	public Text JointPositionArea_Text;
 	public GameObject CapturedResultsRoot;
@@ -27,7 +29,6 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 	//MakeFile makeFile;
 	public List<Pose> poseList;
 	public Text DisplayCapturedResults_Text;
-
 
     [HideInInspector]public bool canUpdate = false;
     public UnityEngine.UI.Image recordPoseToggleImage; //dragged in manually
@@ -58,12 +59,11 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 
 		poseList = GameManager.Instance.poseList;
 		print("Got pose list");
-
-		//Disable for mac / enable for windows
-
+#if UNITY_EDITOR_WIN
 		InitCamera();
+#endif
     }
-
+#if UNITY_EDITOR_WIN
     void InitCamera()
     {
         this.device = Device.Open(0);
@@ -81,19 +81,20 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
         this.tracker = BodyTracker.Create(calibration);
         renderer = GetComponent<Renderer>();
     }
+#endif
 
     void Update()
     {
         if (canUpdate)
         {
-            /*
-             * Disable for mac / enable for windows
-               StreamCameraAsTexture();
+#if UNITY_EDITOR_WIN
+            StreamCameraAsTexture();
+            CaptureSkeletonsFromCameraFrame();
+#endif
 
-               CaptureSkeletonsFromCameraFrame();
-            */
-            //CaptureSkeletonsFromFakeRandomData();
+#if UNITY_EDITOR_OSX
             CaptureSkeletonsFromFakeRandomData();
+#endif
             if (skeletons.Count > 4)
             {
                 Debug.Log("we have enough skeletons");
@@ -116,8 +117,8 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 
         }//end if(canUpdate) 
     }//end Update()
-
-	//Diabled for mac, enabled for windows
+	
+#if UNITY_EDITOR_WIN
 	void StreamCameraAsTexture()
 	{
 		//this streams camera output as a texture to a plane in the scene
@@ -134,8 +135,10 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 			}
 		}
 	}
-	void CaptureSkeletonsFromFakeRandomData()
-    {
+#endif
+
+    void CaptureSkeletonsFromFakeRandomData()
+	{
         //0 Make a new object that will make us a skeleton
         MakeRandomSkeleton makeSkeleton = new MakeRandomSkeleton();
         //1 fill this.skeleton with a skeleton
@@ -157,9 +160,9 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
         }
     }
 
-	// Disabled for mac, enabled for windows
-	//Gets skeletal data from frames, pulls individual joint data from a skeleton, applies pos/rot to blocks representing joints
-	void CaptureSkeletonsFromCameraFrame()
+#if UNITY_EDITOR_WIN
+    //Gets skeletal data from frames, pulls individual joint data from a skeleton, applies pos/rot to blocks representing joints
+    void CaptureSkeletonsFromCameraFrame()
 	{
 		using (var frame = tracker.PopResult())
 		{
@@ -185,7 +188,7 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 			}
 		}
 	}
-
+#endif
 	void FindAverageSkeletalPosition()
 	{
 
@@ -205,7 +208,6 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 				//for fake data, you need to multiply by something bigger than .3 on windows we did * .004
 				Vector3 posV3 = new Vector3(pos[0], -pos[1], pos[2]) * 0.4f;
 				positionsOfSameJointPositions.Add(posV3);
-
 			}
 			Vector3 averageOfSingleJointI = Vector3Helper.FindAveragePosition(positionsOfSameJointPositions);
 
@@ -215,9 +217,7 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 			var jointCube = blockman_averagedResults[i];
 			jointCube.transform.SetPositionAndRotation(averageOfSingleJointI, rotationOfFirstSkeleton);
 
-
 			JointPositionArea_Text.text += JointDataStringFormatter.formatJointDataToText(averageOfSingleJointI, (JointId)i);
-
 		}
 	}
 
@@ -251,11 +251,12 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 		skeletons.Clear();
 	}
 
-	//Enabled for windows, disabled for mac
-	private void OnDisable()
-	{
-		//todo test if only called once at the end of the program, if so, renable the below
-		print("DebugRenderer onDisable was called");
+#if UNITY_EDITOR_WIN
+    private void OnDisable()
+    {
+        //todo test if only called once at the end of the program, if so, renable the below
+        print("DebugRenderer onDisable was called");
+
 		device.StopCameras();
 		//k4a_device_close(device) here.
 		if (tracker != null)
@@ -267,11 +268,11 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 			device.Dispose();
 		}
 	}
-	//it's a toggle because it's either recording or not recording
-
+#endif
+    //it's a toggle because it's either recording or not recording
     public void RecordPose_LinkedToToggle()//todo mess with .interactable to prevent click abuse
-        //todo second time pressing this button it will say "recording stopped!", it should say started if we want to clikc the button every time
-        //so we should mark this toggle as off again after we complete a pose
+    //todo second time pressing this button it will say "recording stopped!", it should say started if we want to clikc the button every time
+    //so we should mark this toggle as off again after we complete a pose
     {
         if (GameManager.Instance.poseList.Count > 0)
         {
@@ -316,10 +317,6 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
         countdownParent.SetActive(false);
 
         canUpdate = true;
-        //for (int i = 0; i < 5; i++)
-        //{
-        //    CaptureSkeletonsFromFakeRandomData();
-        //}
     }
 
     public void PoseAccepted_linkToButton()
@@ -330,7 +327,6 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
         CapturedResultsRoot.SetActive(false);
 		EnableBlockman(false);
 		ClearSkeletonsList();
-		//canUpdate = true;
 
         GameManager.Instance.MarkCurrentPoseCompleted();
 	}
