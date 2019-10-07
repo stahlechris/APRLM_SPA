@@ -31,8 +31,11 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
     public Text countdownText; //manually dragged in
     public Text displayCapturedPose; //manually dragged in
     public Text RecordNextPoseToggleText; //manually dragged in 
-	public RawImage test;
+	public RawImage cameraDisplay; //manually dragged in
 
+
+    WebCamTexture webcam;
+    bool isWebcamOn;
 	protected override void Awake()
     {
 		print("DebugRenderer Awake");
@@ -54,33 +57,33 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
         print("Blockman was fetched from GM and set active here in DebugRenderer");
 
 		//Disable for mac / enable for windows
-		InitCamera();
+		//InitCamera();
 	}
 
-    void InitCamera()
-    {
-        this.device = Device.Open(0);
-		var config = new DeviceConfiguration
-		{
-			ColorResolution = ColorResolution.r720p,
-			ColorFormat = ImageFormat.ColorBGRA32,
-			DepthMode = DepthMode.NFOV_Unbinned
-        };
-        device.StartCameras(config);
+  //  void InitCamera()
+  //  {
+  //      this.device = Device.Open(0);
+		//var config = new DeviceConfiguration
+		//{
+		//	ColorResolution = ColorResolution.r720p,
+		//	ColorFormat = ImageFormat.ColorBGRA32,
+		//	DepthMode = DepthMode.NFOV_Unbinned
+  //      };
+  //      device.StartCameras(config);
 
-        //declare and initialize a calibration for the camera
-        var calibration = device.GetCalibration(config.DepthMode, config.ColorResolution);
-        //initialize a tracker with the calibration we just made
-        this.tracker = BodyTracker.Create(calibration);
-        renderer = GetComponent<Renderer>();
-    }
+  //      //declare and initialize a calibration for the camera
+  //      var calibration = device.GetCalibration(config.DepthMode, config.ColorResolution);
+  //      //initialize a tracker with the calibration we just made
+  //      this.tracker = BodyTracker.Create(calibration);
+  //      renderer = GetComponent<Renderer>();
+  //  }
     void Update()
     {
         if (canUpdate)
         {
 			//Disable for mac / enable for windows
-			StreamCameraAsTexture();
-			CaptureSkeletonsFromCameraFrame();
+			//StreamCameraAsTexture();
+			//CaptureSkeletonsFromCameraFrame();
 			
 			//CaptureSkeletonsFromFakeRandomData();
 			if (skeletons.Count > 4)
@@ -106,81 +109,101 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
         }//end if(canUpdate) 
     }//end Update()
 
+    public void EnableWebcam_LinkedToButton()
+    {
+        webcam = new WebCamTexture();
+        //print(webcam.isPlaying);//this is always false. very useful. 10/10. we will keep track of it ourselves
+        if (!isWebcamOn)
+        {
+            isWebcamOn = !isWebcamOn;
+            //y needs to be 0  and h 1 for my webcam.
+            cameraDisplay.uvRect = new Rect(0, 0, 1, 1);
+            webcam.Play();
+            cameraDisplay.texture = webcam;
+        }
+        else
+        {
+            isWebcamOn = !isWebcamOn;
+            print("webcam IS playing");
+            //webcam.Stop(); //this doesn't do shit. excellent work, guys!!
+            //webcam.Pause();//neither does this, what a surprise
+            cameraDisplay.texture = null;//ya i'll do it myself
+        }
+    }
     //Diabled for mac, enabled for windows
-	void StreamCameraAsTexture()
-	{
-		Texture2D texture;
-		//this streams camera output as a texture to a plane in the scene
-		using (Capture capture = device.GetCapture())
-		{
-			tracker.EnqueueCapture(capture);
-			var color = capture.Color;
-			if (color.WidthPixels > 0)
-			{
-				Texture2D tex = new Texture2D(color.WidthPixels, color.HeightPixels, TextureFormat.BGRA32, false);
-				tex.LoadRawTextureData(color.GetBufferCopy());
-				tex.Apply();
-				//renderer.material.mainTexture = tex;
-				//test.mainTexture = tex;
-				texture = tex;
-				//test.texture = tex as Texture2D;
-				test.texture = (Texture2D)tex;
-			}
-		}
-	}
+    //void StreamCameraAsTexture()
+    //{
+    //	Texture2D texture;
+    //	//this streams camera output as a texture to a plane in the scene
+    //	using (Capture capture = device.GetCapture())
+    //	{
+    //		tracker.EnqueueCapture(capture);
+    //		var color = capture.Color;
+    //		if (color.WidthPixels > 0)
+    //		{
+    //			Texture2D tex = new Texture2D(color.WidthPixels, color.HeightPixels, TextureFormat.BGRA32, false);
+    //			tex.LoadRawTextureData(color.GetBufferCopy());
+    //			tex.Apply();
+    //			//renderer.material.mainTexture = tex;
+    //			//test.mainTexture = tex;
+    //			texture = tex;
+    //			cameraDisplay.texture = (Texture2D)tex;
+    //		}
+    //	}
+    //}
 
-	// Disabled for windows, enabled for mac
-	//void CaptureSkeletonsFromFakeRandomData()
- //   {
- //       //0 Make a new object that will make us a skeleton
- //       MakeRandomSkeleton makeSkeleton = new MakeRandomSkeleton();
- //       //1 fill this.skeleton with a skeleton
- //       this.skeleton = makeSkeleton.MakeSkeleton();
- //       //2 add the skele to this list
- //       skeletons.Add(this.skeleton);
- //       //pull out each joint from the skele, transform the data to assign to a vector3 and quaternion
- //       for (var i = 0; i < (int)JointId.Count; i++)
- //       {
- //           var joint = this.skeleton.Joints[i];
- //           var pos = joint.Position;
- //           Debug.Log("pos: " + (JointId)i + " " + pos[0] + " " + pos[1] + " " + pos[2]);
- //           var rot = joint.Orientation;
- //           Debug.Log("rot " + (JointId)i + " " + rot[0] + " " + rot[1] + " " + rot[2] + " " + rot[3]); // Length 4
- //           var v = new Vector3(pos[0], -pos[1], pos[2]) * 0.004f;
- //           var r = new Quaternion(rot[1], rot[2], rot[3], rot[0]);
- //           var obj = blockmanArray[i];
- //           obj.transform.SetPositionAndRotation(v, r);
- //       }
- //   }
+    // Disabled for windows, enabled for mac
+    void CaptureSkeletonsFromFakeRandomData()
+    {
+        //0 Make a new object that will make us a skeleton
+        MakeRandomSkeleton makeSkeleton = new MakeRandomSkeleton();
+        //1 fill this.skeleton with a skeleton
+        this.skeleton = makeSkeleton.MakeSkeleton();
+        //2 add the skele to this list
+        skeletons.Add(this.skeleton);
+        //pull out each joint from the skele, transform the data to assign to a vector3 and quaternion
+        for (var i = 0; i < (int)JointId.Count; i++)
+        {
+            var joint = this.skeleton.Joints[i];
+            var pos = joint.Position;
+            Debug.Log("pos: " + (JointId)i + " " + pos[0] + " " + pos[1] + " " + pos[2]);
+            var rot = joint.Orientation;
+            Debug.Log("rot " + (JointId)i + " " + rot[0] + " " + rot[1] + " " + rot[2] + " " + rot[3]); // Length 4
+            var v = new Vector3(pos[0], -pos[1], pos[2]) * 0.004f;
+            var r = new Quaternion(rot[1], rot[2], rot[3], rot[0]);
+            var obj = blockmanArray[i];
+            obj.transform.SetPositionAndRotation(v, r);
+        }
+    }
 
-	// Disabled for mac, enabled for windows
-	//Gets skeletal data from frames, pulls individual joint data from a skeleton, applies pos/rot to blocks representing joints
-	void CaptureSkeletonsFromCameraFrame()
-	{
-		using (var frame = tracker.PopResult())
-		{
-			Debug.LogFormat("{0} bodies found.", frame.NumBodies);
-			if (frame.NumBodies > 0)
-			{
-				var bodyId = frame.GetBodyId(0);
-				//Debug.LogFormat("bodyId={0}", bodyId);
-				this.skeleton = frame.GetSkeleton(0);
-				skeletons.Add(this.skeleton);
-				for (var i = 0; i < (int)JointId.Count; i++)
-				{
-					var joint = this.skeleton.Joints[i];
-					var pos = joint.Position;
-					Debug.Log("pos: " + (JointId)i + " " + pos[0] + " " + pos[1] + " " + pos[2]);
-					var rot = joint.Orientation;
-					Debug.Log("rot " + (JointId)i + " " + rot[0] + " " + rot[1] + " " + rot[2] + " " + rot[3]); // Length 4
-					var v = new Vector3(pos[0], -pos[1], pos[2]) * 0.004f;
-					var r = new Quaternion(rot[1], rot[2], rot[3], rot[0]);
-					var obj = blockmanArray[i];
-					obj.transform.SetPositionAndRotation(v, r);
-				}
-			}
-		}
-	}
+    // Disabled for mac, enabled for windows
+    //Gets skeletal data from frames, pulls individual joint data from a skeleton, applies pos/rot to blocks representing joints
+ //   void CaptureSkeletonsFromCameraFrame()
+	//{
+	//	using (var frame = tracker.PopResult())
+	//	{
+	//		Debug.LogFormat("{0} bodies found.", frame.NumBodies);
+	//		if (frame.NumBodies > 0)
+	//		{
+	//			var bodyId = frame.GetBodyId(0);
+	//			//Debug.LogFormat("bodyId={0}", bodyId);
+	//			this.skeleton = frame.GetSkeleton(0);
+	//			skeletons.Add(this.skeleton);
+	//			for (var i = 0; i < (int)JointId.Count; i++)
+	//			{
+	//				var joint = this.skeleton.Joints[i];
+	//				var pos = joint.Position;
+	//				Debug.Log("pos: " + (JointId)i + " " + pos[0] + " " + pos[1] + " " + pos[2]);
+	//				var rot = joint.Orientation;
+	//				Debug.Log("rot " + (JointId)i + " " + rot[0] + " " + rot[1] + " " + rot[2] + " " + rot[3]); // Length 4
+	//				var v = new Vector3(pos[0], -pos[1], pos[2]) * 0.004f;
+	//				var r = new Quaternion(rot[1], rot[2], rot[3], rot[0]);
+	//				var obj = blockmanArray[i];
+	//				obj.transform.SetPositionAndRotation(v, r);
+	//			}
+	//		}
+	//	}
+	//}
 
 	void FindAverageSkeletalPosition()
 	{
@@ -249,21 +272,21 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 	}
 
 	// Enabled for windows, disabled for mac
-	private void OnDisable()
-    {
-        //todo test if only called once at the end of the program, if so, renable the below
-        print("DebugRenderer onDisable was called");
-		device.StopCameras();
-		//k4a_device_close(device) here.
-		if (tracker != null)
-		{
-			tracker.Dispose();
-		}
-		if (device != null)
-		{
-			device.Dispose();
-		}
-	}
+	//private void OnDisable()
+ //   {
+ //       //todo test if only called once at the end of the program, if so, renable the below
+ //       print("DebugRenderer onDisable was called");
+	//	device.StopCameras();
+	//	//k4a_device_close(device) here.
+	//	if (tracker != null)
+	//	{
+	//		tracker.Dispose();
+	//	}
+	//	if (device != null)
+	//	{
+	//		device.Dispose();
+	//	}
+	//}
         //it's a toggle because it's either recording or not recording
 
 
