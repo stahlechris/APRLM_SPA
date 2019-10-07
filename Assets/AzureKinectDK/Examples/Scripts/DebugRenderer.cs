@@ -16,13 +16,14 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
     GameObject[] blockman_averagedResults;
     public GameObject CapturedResultsRoot;
     public GameObject blockmanCaptured_parent;
-
+#if UNITY_EDITOR_WIN
     Device device;
     BodyTracker tracker;
+#endif
     Skeleton skeleton;
+
     public Renderer renderer;
 	public Text JointPositionArea_Text;
-
 
     [HideInInspector]public bool canUpdate = false;
     public UnityEngine.UI.Image recordPoseToggleImage; //dragged in manually
@@ -56,37 +57,42 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 		}
         print("Blockman was fetched from GM and set active here in DebugRenderer");
 
-		//Disable for mac / enable for windows
-		//InitCamera();
-	}
+#if UNITY_EDITOR_WIN
+        InitCamera();
+#endif
+    }
+#if UNITY_EDITOR_WIN
+    void InitCamera()
+    {
+        this.device = Device.Open(0);
+		var config = new DeviceConfiguration
+		{
+			ColorResolution = ColorResolution.r720p,
+			ColorFormat = ImageFormat.ColorBGRA32,
+			DepthMode = DepthMode.NFOV_Unbinned
+        };
+        device.StartCameras(config);
 
-  //  void InitCamera()
-  //  {
-  //      this.device = Device.Open(0);
-		//var config = new DeviceConfiguration
-		//{
-		//	ColorResolution = ColorResolution.r720p,
-		//	ColorFormat = ImageFormat.ColorBGRA32,
-		//	DepthMode = DepthMode.NFOV_Unbinned
-  //      };
-  //      device.StartCameras(config);
-
-  //      //declare and initialize a calibration for the camera
-  //      var calibration = device.GetCalibration(config.DepthMode, config.ColorResolution);
-  //      //initialize a tracker with the calibration we just made
-  //      this.tracker = BodyTracker.Create(calibration);
-  //      renderer = GetComponent<Renderer>();
-  //  }
+        //declare and initialize a calibration for the camera
+        var calibration = device.GetCalibration(config.DepthMode, config.ColorResolution);
+        //initialize a tracker with the calibration we just made
+        this.tracker = BodyTracker.Create(calibration);
+        renderer = GetComponent<Renderer>();
+    }
+#endif
     void Update()
     {
         if (canUpdate)
         {
-			//Disable for mac / enable for windows
-			//StreamCameraAsTexture();
-			//CaptureSkeletonsFromCameraFrame();
-			
-			//CaptureSkeletonsFromFakeRandomData();
-			if (skeletons.Count > 4)
+#if UNITY_EDITOR_WIN
+            StreamCameraAsTexture();
+            CaptureSkeletonsFromCameraFrame();
+#endif
+
+#if UNITY_EDITOR_OSX
+            CaptureSkeletonsFromFakeRandomData();
+#endif
+            if (skeletons.Count > 4)
             {
                 Debug.Log("we have enough skeletons");
                 //Disable this script's Update loop's logic from running
@@ -130,29 +136,24 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
             cameraDisplay.texture = null;//ya i'll do it myself
         }
     }
-    //Diabled for mac, enabled for windows
-    //void StreamCameraAsTexture()
-    //{
-    //	Texture2D texture;
-    //	//this streams camera output as a texture to a plane in the scene
-    //	using (Capture capture = device.GetCapture())
-    //	{
-    //		tracker.EnqueueCapture(capture);
-    //		var color = capture.Color;
-    //		if (color.WidthPixels > 0)
-    //		{
-    //			Texture2D tex = new Texture2D(color.WidthPixels, color.HeightPixels, TextureFormat.BGRA32, false);
-    //			tex.LoadRawTextureData(color.GetBufferCopy());
-    //			tex.Apply();
-    //			//renderer.material.mainTexture = tex;
-    //			//test.mainTexture = tex;
-    //			texture = tex;
-    //			cameraDisplay.texture = (Texture2D)tex;
-    //		}
-    //	}
-    //}
-
-    // Disabled for windows, enabled for mac
+#if UNITY_EDITOR_WIN
+	void StreamCameraAsTexture()
+	{
+		//this streams camera output as a texture to a plane in the scene
+		using (Capture capture = device.GetCapture())
+		{
+			tracker.EnqueueCapture(capture);
+			var color = capture.Color;
+			if (color.WidthPixels > 0)
+			{
+				Texture2D tex = new Texture2D(color.WidthPixels, color.HeightPixels, TextureFormat.BGRA32, false);
+				tex.LoadRawTextureData(color.GetBufferCopy());
+				tex.Apply();
+				renderer.material.mainTexture = tex;
+			}
+		}
+	}
+#endif
     void CaptureSkeletonsFromFakeRandomData()
     {
         //0 Make a new object that will make us a skeleton
@@ -175,36 +176,35 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
             obj.transform.SetPositionAndRotation(v, r);
         }
     }
-
-    // Disabled for mac, enabled for windows
+#if UNITY_EDITOR_WIN
     //Gets skeletal data from frames, pulls individual joint data from a skeleton, applies pos/rot to blocks representing joints
- //   void CaptureSkeletonsFromCameraFrame()
-	//{
-	//	using (var frame = tracker.PopResult())
-	//	{
-	//		Debug.LogFormat("{0} bodies found.", frame.NumBodies);
-	//		if (frame.NumBodies > 0)
-	//		{
-	//			var bodyId = frame.GetBodyId(0);
-	//			//Debug.LogFormat("bodyId={0}", bodyId);
-	//			this.skeleton = frame.GetSkeleton(0);
-	//			skeletons.Add(this.skeleton);
-	//			for (var i = 0; i < (int)JointId.Count; i++)
-	//			{
-	//				var joint = this.skeleton.Joints[i];
-	//				var pos = joint.Position;
-	//				Debug.Log("pos: " + (JointId)i + " " + pos[0] + " " + pos[1] + " " + pos[2]);
-	//				var rot = joint.Orientation;
-	//				Debug.Log("rot " + (JointId)i + " " + rot[0] + " " + rot[1] + " " + rot[2] + " " + rot[3]); // Length 4
-	//				var v = new Vector3(pos[0], -pos[1], pos[2]) * 0.004f;
-	//				var r = new Quaternion(rot[1], rot[2], rot[3], rot[0]);
-	//				var obj = blockmanArray[i];
-	//				obj.transform.SetPositionAndRotation(v, r);
-	//			}
-	//		}
-	//	}
-	//}
-
+    void CaptureSkeletonsFromCameraFrame()
+	{
+		using (var frame = tracker.PopResult())
+		{
+			Debug.LogFormat("{0} bodies found.", frame.NumBodies);
+			if (frame.NumBodies > 0)
+			{
+				var bodyId = frame.GetBodyId(0);
+				//Debug.LogFormat("bodyId={0}", bodyId);
+				this.skeleton = frame.GetSkeleton(0);
+				skeletons.Add(this.skeleton);
+				for (var i = 0; i < (int)JointId.Count; i++)
+				{
+					var joint = this.skeleton.Joints[i];
+					var pos = joint.Position;
+					Debug.Log("pos: " + (JointId)i + " " + pos[0] + " " + pos[1] + " " + pos[2]);
+					var rot = joint.Orientation;
+					Debug.Log("rot " + (JointId)i + " " + rot[0] + " " + rot[1] + " " + rot[2] + " " + rot[3]); // Length 4
+					var v = new Vector3(pos[0], -pos[1], pos[2]) * 0.004f;
+					var r = new Quaternion(rot[1], rot[2], rot[3], rot[0]);
+					var obj = blockmanArray[i];
+					obj.transform.SetPositionAndRotation(v, r);
+				}
+			}
+		}
+	}
+#endif
 	void FindAverageSkeletalPosition()
 	{
 		Debug.Log("activating blockman captured blocks");
@@ -223,7 +223,6 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
                 //for fake data, you need to multiply by something bigger than .3 on windows we did * .004
 				Vector3 posV3 = new Vector3(pos[0], -pos[1], pos[2]) * 0.4f;
 				positionsOfSameJointPositions.Add(posV3);
-
 			}
 			Vector3 averageOfSingleJointI = Vector3Helper.FindAveragePosition(positionsOfSameJointPositions);
 
@@ -233,11 +232,7 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 			var jointCube = blockman_averagedResults[i];
 			jointCube.transform.SetPositionAndRotation(averageOfSingleJointI, rotationOfFirstSkeleton);
 
-
 			JointPositionArea_Text.text += JointDataStringFormatter.formatJointDataToText(averageOfSingleJointI, (JointId)i);
-
-
-
 		}
 	}
 
@@ -271,28 +266,27 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 		skeletons.Clear();
 	}
 
-	// Enabled for windows, disabled for mac
-	//private void OnDisable()
- //   {
- //       //todo test if only called once at the end of the program, if so, renable the below
- //       print("DebugRenderer onDisable was called");
-	//	device.StopCameras();
-	//	//k4a_device_close(device) here.
-	//	if (tracker != null)
-	//	{
-	//		tracker.Dispose();
-	//	}
-	//	if (device != null)
-	//	{
-	//		device.Dispose();
-	//	}
-	//}
-        //it's a toggle because it's either recording or not recording
-
-
+#if UNITY_EDITOR_WIN
+    private void OnDisable()
+    {
+        //todo test if only called once at the end of the program, if so, renable the below
+        print("DebugRenderer onDisable was called");
+		device.StopCameras();
+		//k4a_device_close(device) here.
+		if (tracker != null)
+		{
+			tracker.Dispose();
+		}
+		if (device != null)
+		{
+			device.Dispose();
+		}
+	}
+#endif
+    //it's a toggle because it's either recording or not recording
     public void RecordPose_LinkedToToggle()//todo mess with .interactable to prevent click abuse
-        //todo second time pressing this button it will say "recording stopped!", it should say started if we want to clikc the button every time
-        //so we should mark this toggle as off again after we complete a pose
+    //todo second time pressing this button it will say "recording stopped!", it should say started if we want to clikc the button every time
+    //so we should mark this toggle as off again after we complete a pose
     {
         if (GameManager.Instance.poseList.Count > 0)
         {
@@ -337,10 +331,6 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
         countdownParent.SetActive(false);
 
         canUpdate = true;
-        //for (int i = 0; i < 5; i++)
-        //{
-        //    CaptureSkeletonsFromFakeRandomData();
-        //}
     }
 
     public void PoseAccepted_linkToButton()
@@ -351,7 +341,6 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
         CapturedResultsRoot.SetActive(false);
 		EnableBlockman(false);
 		ClearSkeletonsList();
-		//canUpdate = true;
 
         GameManager.Instance.MarkCurrentPoseCompleted();
 	}
@@ -373,8 +362,5 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 		EnableBlockman(false);
         //reset the skeletons list that we just captured
 		ClearSkeletonsList();
-        //let the update run again to capture skeles
-		//canUpdate = true;
-        //todo clear the poses text
 	}
 }
