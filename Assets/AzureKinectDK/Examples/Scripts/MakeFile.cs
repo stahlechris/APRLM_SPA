@@ -7,7 +7,7 @@ using Microsoft.Azure.Kinect.Sensor;
 /// </summary>
 ///
 [ExecuteInEditMode]
-public class MakeFile : MonoBehaviour
+public class MakeFile : MonoBehaviour  //TODO this is making a folder within the folder you created and putting the file in the sub folder
 {
 	[Header("The path of where the file will be saved to after playing scene.")]
 	[Tooltip("Defaults to saving file in Assets folder.")]
@@ -18,7 +18,7 @@ public class MakeFile : MonoBehaviour
     [Tooltip("Defaults to 'myfile' ")]
     public string FILE_NAME = "";
 
-    [Header("Hey bro?")]
+    [Header("Hey bro??")]
     [Tooltip("Defaults to '[insert description here]'.")]
     public string FILE_DESCRIPTION = "";
 
@@ -76,7 +76,7 @@ public class MakeFile : MonoBehaviour
 		return Application.platform == RuntimePlatform.WindowsEditor
 			|| Application.platform == RuntimePlatform.WindowsPlayer;
 	}
-
+	
 	bool isMac()
 	{
 		return Application.platform == RuntimePlatform.OSXEditor
@@ -200,7 +200,7 @@ public class MakeFile : MonoBehaviour
     //Declare a MakeFile file = new MakeFile(); then...
     //file.WriteToFile("49");
     /// </summary>
-    public void WriteToFile(string message)
+    public void WriteToFile(string message)  //TODO make a check to see if folder exists. (aka so we don't have to delete manually after every test capture)
     {
 		InitFileAndFolder();
 		print("Write path " + getFileLocation());
