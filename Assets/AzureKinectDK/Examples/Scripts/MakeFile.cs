@@ -97,30 +97,33 @@ public class MakeFile : MonoBehaviour  //TODO this is making a folder within the
 		slashReturn = new String(slashMac, 1);
 		return slashReturn;
 #endif
-		char slashWin = '\u005c';
-		if (isWindows())
-		{
-			//SOURCE_PATH = SOURCE_WINDOWS_PATH;
-			//print("you're on a pc");
-			slashReturn = new String(slashWin, 1);
-		}
-		else
-		{
-			print("Unrecognized platform: " + Application.platform);
-		}
-		//print("Data path: " + getDataPath());
 
+#if UNITY_EDITOR_WIN
+		char slashWin = '\u005c';
+		//if (isWindows())
+		//SOURCE_PATH = SOURCE_WINDOWS_PATH;
+		//print("you're on a pc");
+		slashReturn = new String(slashWin, 1);
+		return slashReturn;
+#endif
+
+		print("Unrecognized platform: " + Application.platform);
+		//print("Data path: " + getDataPath());
 		//print("returning slash: " + slashReturn);
 		return slashReturn;
 	}
 
 	string getDataPath()
 	{
-
+		String returnPath = "returnPath";
 #if UNITY_EDITOR_OSX
-		return Application.dataPath
+		returnPath = Application.dataPath;
 #endif
-		return Application.dataPath.Replace("/", "\\");
+
+#if UNITY_EDITOR_WIN
+		returnPath = Application.dataPath.Replace("/", "\\");
+#endif
+		return returnPath;
 	}
 
 	string getFolderName()
