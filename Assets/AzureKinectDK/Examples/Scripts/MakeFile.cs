@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.IO;
 using System;
+using System.Collections.Generic;
 using Microsoft.Azure.Kinect.Sensor;
 /// <summary>
 /// WARNING: Using a backslash will make this script explode.
@@ -37,6 +38,8 @@ public class MakeFile : MonoBehaviour  //TODO this is making a folder within the
 
     static int awakeCount = 0; //this must be static
     int pausedCount = 0; //this doesn't have to be static
+
+	List<int> intList = new List<int>();
 
 	private static MakeFile _instance;
 	
@@ -86,19 +89,20 @@ public class MakeFile : MonoBehaviour  //TODO this is making a folder within the
 	string getSlash()
 	{
 		string slashReturn = "";
+#if UNITY_EDITOR_OSX
+		//else if (isMac())
 		char slashMac = '\u2215';
+		//SOURCE_PATH = SOURCE_OSX_PATH;
+		//print("you're on a mac/linux");
+		slashReturn = new String(slashMac, 1);
+		return slashReturn;
+#endif
 		char slashWin = '\u005c';
 		if (isWindows())
 		{
 			//SOURCE_PATH = SOURCE_WINDOWS_PATH;
 			//print("you're on a pc");
 			slashReturn = new String(slashWin, 1);
-		}
-		else if (isMac())
-		{
-			//SOURCE_PATH = SOURCE_OSX_PATH;
-			//print("you're on a mac/linux");
-			slashReturn = new String(slashMac, 1);
 		}
 		else
 		{
@@ -112,11 +116,11 @@ public class MakeFile : MonoBehaviour  //TODO this is making a folder within the
 
 	string getDataPath()
 	{
-		if (isWindows())
-		{
-			return Application.dataPath.Replace("/", "\\");
-		}
-		return Application.dataPath;
+
+#if UNITY_EDITOR_OSX
+		return Application.dataPath
+#endif
+		return Application.dataPath.Replace("/", "\\");
 	}
 
 	string getFolderName()
@@ -183,10 +187,11 @@ public class MakeFile : MonoBehaviour  //TODO this is making a folder within the
 			{
 				var dirToCreate = getPath();
 				var directory = Directory.CreateDirectory(dirToCreate);
-				Debug.Assert(dirToCreate.Equals(directory));
+				//Debug.Assert(dirToCreate.Equals(directory));
 				//print("Full name: " + directory.FullName);
-				print("Create dir: " + dirToCreate);
-				print("file " + getFileLocation());
+				Debug.Log("DirToCreate: " + dirToCreate); // print
+				Debug.Log("directory: " + directory); // print
+				Debug.Log("file " + getFileLocation());
 				//PATH = directory.FullName;
 			}
 			catch (Exception e)
