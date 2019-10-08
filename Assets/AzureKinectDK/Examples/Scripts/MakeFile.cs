@@ -190,6 +190,13 @@ public class MakeFile : MonoBehaviour  //TODO this is making a folder within the
 			{
 				var dirToCreate = getPath();
 				var directory = Directory.CreateDirectory(dirToCreate);
+#if UNITY_EDITOR_OSX
+				directory = Directory
+					.CreateDirectory("⁩/⁨Users⁩/⁨stahle⁩/Unity2019⁩/⁨APRLM_SPA⁩/Assets/poseMacTest");
+				pathFolderFileExt[0] = "⁩/⁨Users⁩/⁨stahle⁩/Unity2019⁩/⁨APRLM_SPA⁩/Assets";
+				pathFolderFileExt[1] = "⁩/";
+				pathFolderFileExt[2] = "poseMacTest/⁩";
+#endif
 				//Debug.Assert(dirToCreate.Equals(directory));
 				//print("Full name: " + directory.FullName);
 				Debug.Log("DirToCreate: " + dirToCreate); // print
