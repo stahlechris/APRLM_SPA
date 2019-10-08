@@ -145,7 +145,7 @@ public class MakeFile : MonoBehaviour  //TODO this is making a folder within the
 	{
 		string fileName = FILE_NAME.Length > 0 ? FILE_NAME : "myfile";
 		string ymd_hms = DateTime.Now.ToString("yyyyMMdd_HHmmss");
-		fileName = fileName + ymd_hms;
+		fileName = ymd_hms + fileName;
 		//Debug.Log(DateTime.Now);                        // 09/28/2019 17:05:12
 		//Debug.Log(DateTime.Now.ToString());             // 9/28/2019 5:05:12 PM
 		//Debug.Log(DateTime.Now.ToShortDateString());    // 9/28/2019
