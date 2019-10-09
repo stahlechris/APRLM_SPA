@@ -62,8 +62,6 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 #if UNITY_EDITOR_WIN
 		InitCamera();
 #endif
-		//these are comments
-		// to test how git works
     }
 #if UNITY_EDITOR_WIN
     void InitCamera()
