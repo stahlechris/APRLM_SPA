@@ -22,8 +22,10 @@ public class StringHelper : MonoBehaviour
             yield return new WaitForEndOfFrame();
 
         }
+#if UNITY_EDITOR
         //Simulate pressing play button to stop scene from playing
         UnityEditor.EditorApplication.isPlaying = false;
+#endif
     }
 
     //todo method to help format position and rotation data by joint name

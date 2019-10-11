@@ -61,7 +61,9 @@ namespace APRLM.Game
             if(poseList.Count < 1)
             {
                 Debug.Log("!No poses were dragged into the Pose List!");
+#if UNITY_EDITOR
                 EditorApplication.isPlaying = false;
+#endif
             }
             else
             {
@@ -115,7 +117,9 @@ namespace APRLM.Game
             }
             else
             {
+#if UNITY_EDITOR
                 EditorApplication.isPlaying = false;
+#endif
             }
         }
         
