@@ -3,6 +3,8 @@ using System.IO;
 using System;
 using System.Collections.Generic;
 using Microsoft.Azure.Kinect.Sensor;
+using Environment = System.Environment;
+
 /// <summary>
 /// WARNING: Using a backslash will make this script explode.
 /// </summary>
@@ -117,11 +119,15 @@ public class MakeFile : MonoBehaviour  //TODO this is making a folder within the
 	{
 		String returnPath = "returnPath";
 #if UNITY_EDITOR_OSX
-		returnPath = Application.dataPath;
+		savedGamesPath = Application.persistentDataPath;
+		//returnPath = Application.dataPath;
 #endif
 
 #if UNITY_EDITOR_WIN
-		returnPath = Application.dataPath.Replace("/", "\\");
+		returnPath =
+			Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments); //.Replace("\\", "/");
+		returnPath += "\\APRLM";
+		//returnPath = Application.dataPath.Replace("/", "\\");
 #endif
 		return returnPath;
 	}
