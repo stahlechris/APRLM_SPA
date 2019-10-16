@@ -108,6 +108,7 @@ public class MakeFile : MonoBehaviour  //TODO this is making a folder within the
 #if UNITY_EDITOR_OSX
 		returnPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments); // /Users/username
 		returnPath += "/Documents/APRLM";
+
 #endif
 
 #if UNITY_EDITOR_WIN
@@ -122,7 +123,7 @@ public class MakeFile : MonoBehaviour  //TODO this is making a folder within the
 		string folderName = "";
 		if (!FOLDER_NAME.Equals(""))
 		{
-			if (!FOLDER_NAME.EndsWith(getSlash()))
+			if (!FOLDER_NAME.EndsWith(getSlash(),StringComparison.CurrentCulture))
 			{
 				FOLDER_NAME = FOLDER_NAME + getSlash();
 			}
