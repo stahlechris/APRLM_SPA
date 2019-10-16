@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using Microsoft.Azure.Kinect.Sensor.BodyTracking;
 using System;
+using Environment = System.Environment;
 
 namespace APRLM.Game
 {
@@ -51,6 +52,9 @@ namespace APRLM.Game
         void Start()
         {
             Debug.Log("GM start called");
+
+            Debug.Log(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
+            Debug.Log(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments));
         }
         public List<Pose> GetPoseList()
         {
@@ -89,6 +93,10 @@ namespace APRLM.Game
             {
                 return true;
             }
+        }
+        public void AddPosesToPoseList(string poses)
+        {
+            //todo
         }
         public void MarkCurrentPoseCompleted()
         {
