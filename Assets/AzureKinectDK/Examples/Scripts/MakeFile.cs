@@ -108,7 +108,7 @@ public class MakeFile : MonoBehaviour  //TODO this is making a folder within the
 #if UNITY_EDITOR_OSX
 		returnPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments); // /Users/username
 		returnPath += "/Documents/APRLM";
-		print("returnPath:" + returnPath);
+		print("returnPath:" + returnPath); //returnPath:/Users/stahle/Documents/APRLM
 #endif
 
 #if UNITY_EDITOR_WIN
@@ -188,16 +188,25 @@ public class MakeFile : MonoBehaviour  //TODO this is making a folder within the
 			{
 				var dirToCreate = getPath();
 				var directory = Directory.CreateDirectory(dirToCreate);
-#if UNITY_EDITOR_OSX
-				directory = Directory
-					.CreateDirectory("⁩/⁨Users⁩/⁨stahle⁩/Unity2019⁩/⁨APRLM_SPA⁩/Assets/poseMacTest");
-				pathFolderFileExt[0] = "⁩/⁨Users⁩/⁨stahle⁩/Unity2019⁩/⁨APRLM_SPA⁩/Assets";
-				pathFolderFileExt[1] = "⁩/";
-				pathFolderFileExt[2] = "poseMacTest/⁩";
-#endif
-				Debug.Log("DirToCreate: " + dirToCreate);
+				char[] dirAsCharArr = directory.ToString().ToCharArray();
+				string charAt = "";
+				int idx = 0;
+				Array.ForEach(dirAsCharArr, c =>
+				{
+					charAt = directory.ToString().Substring(idx, idx + 1);
+					print(charAt + ": " + (int)c);
+					idx += 1;
+				});
+//#if UNITY_EDITOR_OSX
+//				directory = Directory
+//					.CreateDirectory("⁩/⁨Users⁩/⁨stahle⁩/Unity2019⁩/⁨APRLM_SPA⁩/Assets/poseMacTest"); // these worked
+//				pathFolderFileExt[0] = "⁩/⁨Users⁩/⁨stahle⁩/Unity2019⁩/⁨APRLM_SPA⁩/Assets"; // kind of?
+//				pathFolderFileExt[1] = "⁩/";
+//				pathFolderFileExt[2] = "poseMacTest/⁩";
+//#endif
+				Debug.Log("DirToCreate: " + dirToCreate); //DirToCreate: /Users/stahle/Documents/APRLM∕raw∕poseList∕
 				Debug.Log("directory: " + directory);
-				Debug.Log("file " + getFileLocation());
+				Debug.Log("file " + getFileLocation()); //file ⁩/⁨Users⁩/⁨stahle⁩/Unity2019⁩/⁨APRLM_SPA⁩/Assets⁩/poseMacTest/⁩20191016_075725myfile.txt
 			}
 			catch (Exception e)
 			{
@@ -224,7 +233,7 @@ public class MakeFile : MonoBehaviour  //TODO this is making a folder within the
 	{
 		bool writeRawData = true;
 		InitFileAndFolder(writeRawData);
-		print("Write raw path " + getFileLocation());
+		print("Write raw path " + getFileLocation()); //Write raw path ⁩/⁨Users⁩/⁨stahle⁩/Unity2019⁩/⁨APRLM_SPA⁩/Assets⁩/poseMacTest/⁩20191016_075725myfile.txt
 		print("writing raw...");
 		File.WriteAllText(getFileLocation(), System.DateTime.Now + "\n" + FILE_DESCRIPTION + "\n" + message);
 		print("wrote raw " + System.DateTime.Now + "\n" + FILE_DESCRIPTION + "\n" + message);
