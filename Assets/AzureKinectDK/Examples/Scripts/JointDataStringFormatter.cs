@@ -10,4 +10,12 @@ public static class JointDataStringFormatter
 		string formattedLine = "Avg " + joint.ToString() + ": " + singleJointPosition.ToString() + "\n";
 		return formattedLine;
 	}
+
+	public static string formatJointDataToText(Vector3 singleJointPosition, Quaternion singleJointRotation, JointId joint)
+	{
+		string formattedLine = "Joint " + joint.ToString() + " position: " + singleJointPosition.ToString() + "\n";
+		formattedLine += "Joint " + joint.ToString() + " rotation: " + singleJointRotation.ToString() + "\n";
+
+		return formattedLine;
+	}
 }

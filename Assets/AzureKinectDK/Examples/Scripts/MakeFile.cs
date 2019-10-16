@@ -68,11 +68,6 @@ public class MakeFile : MonoBehaviour  //TODO this is making a folder within the
 		if (++awakeCount == 1) //this is used to detect pauses...
         {
 			InitFileAndFolder();
-			//print("Init path: " + PATH);
-			//print("Init name: " + FILE_NAME);
-			//print("Init desc: " + FILE_DESCRIPTION);
-			//print("Init name folder: " + FOLDER_NAME);
-			//print("Init path folder: " + FOLDER_PATH);
 		}
     }
 
@@ -92,26 +87,18 @@ public class MakeFile : MonoBehaviour  //TODO this is making a folder within the
 	{
 		string slashReturn = "";
 #if UNITY_EDITOR_OSX
-		//else if (isMac())
 		char slashMac = '\u2215';
-		//SOURCE_PATH = SOURCE_OSX_PATH;
-		//print("you're on a mac/linux");
 		slashReturn = new String(slashMac, 1);
 		return slashReturn;
 #endif
 
 #if UNITY_EDITOR_WIN
 		char slashWin = '\u005c';
-		//if (isWindows())
-		//SOURCE_PATH = SOURCE_WINDOWS_PATH;
-		//print("you're on a pc");
 		slashReturn = new String(slashWin, 1);
 		return slashReturn;
 #endif
 
 		print("Unrecognized platform: " + Application.platform);
-		//print("Data path: " + getDataPath());
-		//print("returning slash: " + slashReturn);
 		return slashReturn;
 	}
 
@@ -119,29 +106,36 @@ public class MakeFile : MonoBehaviour  //TODO this is making a folder within the
 	{
 		String returnPath = "returnPath";
 #if UNITY_EDITOR_OSX
-		savedGamesPath = Application.persistentDataPath;
-		//returnPath = Application.dataPath;
+		returnPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) // /Users/username
+		returnPath += "/Documents/APRLM"
 #endif
 
 #if UNITY_EDITOR_WIN
-		returnPath =
-			Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments); //.Replace("\\", "/");
+		returnPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 		returnPath += "\\APRLM";
-		//returnPath = Application.dataPath.Replace("/", "\\");
 #endif
 		return returnPath;
 	}
 
-	string getFolderName()
+	string getFolderName(bool writeRaw)
 	{
 		string folderName = "";
 		if (!FOLDER_NAME.Equals(""))
-		{ // do we need to create the folder first?
+		{
 			if (!FOLDER_NAME.EndsWith(getSlash()))
 			{
-				FOLDER_NAME = FOLDER_NAME + getSlash(); // trailing slash
+				FOLDER_NAME = FOLDER_NAME + getSlash();
 			}
 			folderName = FOLDER_NAME;
+		}
+
+		if (writeRaw)
+		{
+			folderName = "raw" + getSlash() + folderName;
+		}
+		else
+		{
+			folderName = "avg" + getSlash() + folderName;
 		}
 
 		return folderName;
@@ -150,7 +144,6 @@ public class MakeFile : MonoBehaviour  //TODO this is making a folder within the
 	string getPath()
 	{
 		string filePath = pathFolderFileExt[0] + pathFolderFileExt[1] + pathFolderFileExt[2];
-		//print("File Path: " + filePath);
 		return filePath;
 	}
 
@@ -169,24 +162,22 @@ public class MakeFile : MonoBehaviour  //TODO this is making a folder within the
 		//Debug.Log(DateTime.Now.ToLocalTime());          // 09/28/2019 17:05:12
 		//Debug.Log(DateTime.Now.ToString("yyyyMMdd_HHmmss"));// 20190928_170923
 
-
 		return fileName;
 	}
 
 	string getFileLocation()
 	{
 		string fileLoc = string.Join("", pathFolderFileExt);
-		//print("File Location: " + fileLoc);
 		return fileLoc;
 	}
 
-	void InitFileAndFolder()
+	void InitFileAndFolder(bool writeRaw=false)
 	{
 		FILE_DESCRIPTION = "[Insert file description here]";
 
 		pathFolderFileExt[0] = PATH.Length > 0 ? PATH : getDataPath();
-		pathFolderFileExt[1] = getSlash(); // trailing slash
-		pathFolderFileExt[2] = getFolderName();
+		pathFolderFileExt[1] = getSlash();
+		pathFolderFileExt[2] = getFolderName(writeRaw);
 		pathFolderFileExt[3] = getFileName();
 		pathFolderFileExt[4] = FILE_EXTENSION;
 
@@ -203,12 +194,9 @@ public class MakeFile : MonoBehaviour  //TODO this is making a folder within the
 				pathFolderFileExt[1] = "⁩/";
 				pathFolderFileExt[2] = "poseMacTest/⁩";
 #endif
-				//Debug.Assert(dirToCreate.Equals(directory));
-				//print("Full name: " + directory.FullName);
-				Debug.Log("DirToCreate: " + dirToCreate); // print
-				Debug.Log("directory: " + directory); // print
+				Debug.Log("DirToCreate: " + dirToCreate);
+				Debug.Log("directory: " + directory);
 				Debug.Log("file " + getFileLocation());
-				//PATH = directory.FullName;
 			}
 			catch (Exception e)
 			{
@@ -225,28 +213,27 @@ public class MakeFile : MonoBehaviour  //TODO this is making a folder within the
     {
 		InitFileAndFolder();
 		print("Write path " + getFileLocation());
-		//If file doesn't exist at specified path...
-		//if (!File.Exists(getFileLocation()))
-  //      {
-            print("writing...");
-            File.WriteAllText(getFileLocation(), System.DateTime.Now + "\n" + FILE_DESCRIPTION + "\n" + message);
-            print("wrote " + System.DateTime.Now + "\n" + FILE_DESCRIPTION + "\n" + message);
-            //TODO FORMAT DATA , GET RANDOM DATA FROM CREATING A SKELETON REAL QUICK
-        //}
-        //If file does exist at that path...aka we have called this method twice in one session(which we will be doing, bro)
-        //else if (File.Exists(getFileLocation()))
-        //{
-        //    File.AppendAllText(getFileLocation(), "\n" + message);
-        //    print("wrote " + message);
-        //}
-        //if we already have joint data written here that means we either forgot to move the folder/file or we are trying to rewrite it
-        //else if()//we have more than 26 lines of data, it means we have written joint data to this thing
-    }
 
-    private void OnApplicationQuit()
+        print("writing...");
+        File.WriteAllText(getFileLocation(), System.DateTime.Now + "\n" + FILE_DESCRIPTION + "\n" + message);
+        print("wrote " + System.DateTime.Now + "\n" + FILE_DESCRIPTION + "\n" + message);
+	}
+
+	public void WriteRawToFile(string message)  //TODO make a check to see if folder exists. (aka so we don't have to delete manually after every test capture)
+	{
+		bool writeRawData = true;
+		InitFileAndFolder(writeRawData);
+		print("Write raw path " + getFileLocation());
+		print("writing raw...");
+		File.WriteAllText(getFileLocation(), System.DateTime.Now + "\n" + FILE_DESCRIPTION + "\n" + message);
+		print("wrote raw " + System.DateTime.Now + "\n" + FILE_DESCRIPTION + "\n" + message);
+
+	}
+
+	private void OnApplicationQuit()
     {
         awakeCount++;
-        print("quit" + awakeCount); //2
+        print("quit" + awakeCount);
 	}
 
 	private void print(string msg)

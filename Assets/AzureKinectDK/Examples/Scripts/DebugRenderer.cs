@@ -104,8 +104,11 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
                 CapturedResultsRoot.SetActive(true);
                 //Clear the text, which is currently holding the last avg vector3 positions of each joint
                 JointPositionArea_Text.text = "";
-                //Find the avg of the current joints of the 5 skele's captured
-                FindAverageSkeletalPosition();
+				//Save off raw skeleton data
+				string allSkeletonsRawData = buildSkeletonTextData(skeletons);
+				GetComponent<MakeFile>().WriteRawToFile(JointPositionArea_Text.text + "\n" + allSkeletonsRawData + "\n");
+				//Find the avg of the current joints of the 5 skele's captured
+				FindAverageSkeletalPosition();
                 //Enable capturedBlockman, disable first blockman
                 EnableBlockman(true);
                 //display what pose was captured
@@ -221,6 +224,29 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 		}
 	}
 
+	string buildSkeletonTextData(List<Skeleton> skeletonsList)
+	{
+		string output = "";
+		skeletonsList.ForEach(skeleton =>
+		{
+			// skeletons is a List<Skeleton> of size 5
+			for (int i = 0; i < (int)JointId.Count; i++)
+			{
+				float[] pos = skeleton.Joints[i].Position;
+				//for fake data, you need to multiply by something bigger than .3 on windows we did * .004
+				Vector3 posV3 = new Vector3(pos[0], -pos[1], pos[2]) * 0.4f;
+
+				float[] rot = skeletons[0].Joints[i].Orientation;
+				Quaternion rotationOfJoint = new Quaternion(rot[1], rot[2], rot[3], rot[0]);
+
+				output += JointDataStringFormatter.formatJointDataToText(posV3, rotationOfJoint, (JointId)i);
+			}
+			output += "=======================================\n";
+		});
+
+		return output;
+	}
+
 	void EnableBlockman(bool enable)
 	{
         //make a parent GO for captured(averaged) blockman
@@ -332,11 +358,12 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 	}
     void WriteDataToFile()
     {
-        //this assumes makeFile.cs is dragged onto the same obj as DebugRenderer.cs
-        //0 get reference to the file making script
-        MakeFile makeFile = GetComponent<MakeFile>();
-        //1 give makeFile a string that it will write to a .txt file
-        makeFile.WriteToFile(displayCapturedPose.text +"\n"+ JointPositionArea_Text.text);
+		//this assumes makeFile.cs is dragged onto the same obj as DebugRenderer.cs
+		//0 get reference to the file making script
+		//MakeFile makeFile = GetComponent<MakeFile>();
+		//1 give makeFile a string that it will write to a .txt file
+		//makeFile.WriteToFile(displayCapturedPose.text +"\n"+ JointPositionArea_Text.text);
+		GetComponent<MakeFile>().WriteToFile(displayCapturedPose.text +"\n"+ JointPositionArea_Text.text);
     }
 	public void PoseDeclined_linkToButton()
 	{
