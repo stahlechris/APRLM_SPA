@@ -106,8 +106,8 @@ public class MakeFile : MonoBehaviour  //TODO this is making a folder within the
 	{
 		String returnPath = "returnPath";
 #if UNITY_EDITOR_OSX
-		returnPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) // /Users/username
-		returnPath += "/Documents/APRLM"
+		returnPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments); // /Users/username
+		returnPath += "/Documents/APRLM";
 #endif
 
 #if UNITY_EDITOR_WIN
