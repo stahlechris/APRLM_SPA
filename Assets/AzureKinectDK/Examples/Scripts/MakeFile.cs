@@ -187,9 +187,14 @@ public class MakeFile : MonoBehaviour  //TODO this is making a folder within the
 		{
 			try
 			{
-				char test = (char)47;
-				print("test1 " + test);
-				print("test2 " + test.ToString());
+				char testNormal = (char)47;
+				char testNotNormal = (char)47;
+				print("testNormal " + testNormal);
+				print("testNotNormal " + testNotNormal);
+				print("testNormal " + testNormal.ToString());
+				print("testNotNormal " + testNotNormal.ToString());
+				print("same char " + (testNormal == testNotNormal).ToString());
+				print("same string " + (testNormal.ToString() == testNotNormal.ToString()).ToString());
 				var dirToCreate = getPath();
 				//dirToCreate = dirToCreate.Replace(
 				var directory = Directory.CreateDirectory(dirToCreate);
