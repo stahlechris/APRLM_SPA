@@ -146,6 +146,11 @@ public class MakeFile : MonoBehaviour  //TODO this is making a folder within the
 	string getPath()
 	{
 		string filePath = pathFolderFileExt[0] + pathFolderFileExt[1] + pathFolderFileExt[2];
+
+		char testNormal = (char)47;
+		char testNotNormal = (char)8725;
+		filePath = filePath.Replace(testNotNormal.ToString(), testNormal.ToString());
+
 		return filePath;
 	}
 
@@ -187,16 +192,7 @@ public class MakeFile : MonoBehaviour  //TODO this is making a folder within the
 		{
 			try
 			{
-				char testNormal = (char)47;
-				char testNotNormal = (char)8725;
-				//print("testNormal " + testNormal);
-				//print("testNotNormal " + testNotNormal);
-				//print("testNormal " + testNormal.ToString());
-				//print("testNotNormal " + testNotNormal.ToString());
-				//print("same char " + (testNormal == testNotNormal).ToString());
-				//print("same string " + (testNormal.ToString() == testNotNormal.ToString()).ToString());
 				var dirToCreate = getPath();
-				dirToCreate = dirToCreate.Replace(testNotNormal.ToString(), testNormal.ToString());
 				var directory = Directory.CreateDirectory(dirToCreate);
 				//char[] dirAsCharArr = directory.ToString().ToCharArray();
 				char[] dirAsCharArr = dirToCreate.ToCharArray();
