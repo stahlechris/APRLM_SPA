@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Azure.Kinect.Sensor;
 using Environment = System.Environment;
+using System.Text;
 
 /// <summary>
 /// WARNING: Using a backslash will make this script explode.
@@ -186,15 +187,19 @@ public class MakeFile : MonoBehaviour  //TODO this is making a folder within the
 		{
 			try
 			{
+				char test = (char)47;
+				print("test1 " + test);
+				print("test2 " + test.ToString());
 				var dirToCreate = getPath();
+				//dirToCreate = dirToCreate.Replace(
 				var directory = Directory.CreateDirectory(dirToCreate);
 				//char[] dirAsCharArr = directory.ToString().ToCharArray();
 				char[] dirAsCharArr = dirToCreate.ToCharArray();
 				string charAt = "";
 				int idx = 0;
 				Array.ForEach(dirAsCharArr, c =>
-				{ // 8725+
-					//charAt = directory.ToString().Substring(idx, idx + 1);
+				{ //  4*47 at start, 3* 8725 at end
+				  //charAt = directory.ToString().Substring(idx, idx + 1);
 					print(dirToCreate[idx] + ": " + (int)c);
 					idx += 1;
 				});
