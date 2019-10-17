@@ -94,16 +94,19 @@ public class MakeFile : MonoBehaviour  //TODO this is making a folder within the
 		//filePath = filePath.Replace(testNotNormal.ToString(), testNormal.ToString());
 		//slashReturn = new String(slashMac, 1);
 		slashReturn = testNormal.ToString();
+		print("47 slash");
 		return slashReturn;
 #endif
 
 #if UNITY_EDITOR_WIN
 		char slashWin = '\u005c';
 		slashReturn = new String(slashWin, 1);
+		print("05 slash");
 		return slashReturn;
 #endif
 
 		print("Unrecognized platform: " + Application.platform);
+		print("no slash");
 		return slashReturn;
 	}
 
@@ -141,7 +144,9 @@ public class MakeFile : MonoBehaviour  //TODO this is making a folder within the
 		}
 		else
 		{
-			folderName = "avg" + getSlash() + folderName;
+			char[] slas = getSlash().ToCharArray();
+			if (slas.Length > 0) { print("analysis: " + slas[0].ToString()); } else { print("empty slas"); }
+				folderName = "avg" + getSlash() + folderName;
 		}
 
 		return folderName;
@@ -202,12 +207,12 @@ public class MakeFile : MonoBehaviour  //TODO this is making a folder within the
 				char[] dirAsCharArr = dirToCreate.ToCharArray();
 				string charAt = "";
 				int idx = 0;
-				Array.ForEach(dirAsCharArr, c =>
-				{ //  4*47 at start, 3* 8725 at end
-				  //charAt = directory.ToString().Substring(idx, idx + 1);
-					print(dirToCreate[idx] + ": " + (int)c);
-					idx += 1;
-				});
+				//Array.ForEach(dirAsCharArr, c =>
+				//{ //  4*47 at start, 3* 8725 at end
+				//  //charAt = directory.ToString().Substring(idx, idx + 1);
+				//	print(dirToCreate[idx] + ": " + (int)c);
+				//	idx += 1;
+				//});
 //#if UNITY_EDITOR_OSX
 //				directory = Directory
 //					.CreateDirectory("⁩/⁨Users⁩/⁨stahle⁩/Unity2019⁩/⁨APRLM_SPA⁩/Assets/poseMacTest"); // these worked
