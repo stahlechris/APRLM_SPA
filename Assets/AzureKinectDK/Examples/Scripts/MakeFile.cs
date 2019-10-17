@@ -188,13 +188,14 @@ public class MakeFile : MonoBehaviour  //TODO this is making a folder within the
 			{
 				var dirToCreate = getPath();
 				var directory = Directory.CreateDirectory(dirToCreate);
-				char[] dirAsCharArr = directory.ToString().ToCharArray();
+				//char[] dirAsCharArr = directory.ToString().ToCharArray();
+				char[] dirAsCharArr = dirToCreate.ToCharArray();
 				string charAt = "";
 				int idx = 0;
 				Array.ForEach(dirAsCharArr, c =>
-				{
+				{ // 8725+
 					//charAt = directory.ToString().Substring(idx, idx + 1);
-					print(directory.ToString()[idx] + ": " + (int)c);
+					print(dirToCreate[idx] + ": " + (int)c);
 					idx += 1;
 				});
 //#if UNITY_EDITOR_OSX
