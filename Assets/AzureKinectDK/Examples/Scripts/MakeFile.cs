@@ -188,7 +188,7 @@ public class MakeFile : MonoBehaviour  //TODO this is making a folder within the
 			try
 			{
 				char testNormal = (char)47;
-				char testNotNormal = (char)47;
+				char testNotNormal = (char)8725;
 				print("testNormal " + testNormal);
 				print("testNotNormal " + testNotNormal);
 				print("testNormal " + testNormal.ToString());
