@@ -128,10 +128,10 @@ public class MakeFile : MonoBehaviour  //TODO this is making a folder within the
 		string folderName = "";
 		if (!FOLDER_NAME.Equals(""))
 		{
-			if (!FOLDER_NAME.EndsWith(getSlash(),StringComparison.CurrentCulture))
-			{
-				FOLDER_NAME = FOLDER_NAME + getSlash();
-			}
+			//if (!FOLDER_NAME.EndsWith(getSlash(),StringComparison.CurrentCulture))
+			//{
+			//	FOLDER_NAME = FOLDER_NAME + getSlash();
+			//}
 			folderName = FOLDER_NAME;
 		}
 
