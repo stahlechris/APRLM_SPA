@@ -88,8 +88,12 @@ public class MakeFile : MonoBehaviour  //TODO this is making a folder within the
 	{
 		string slashReturn = "";
 #if UNITY_EDITOR_OSX
-		char slashMac = '\u2215';
-		slashReturn = new String(slashMac, 1);
+		//char slashMac = '\u2215';
+		char testNormal = (char)47;
+		//char testNotNormal = (char)8725;
+		//filePath = filePath.Replace(testNotNormal.ToString(), testNormal.ToString());
+		//slashReturn = new String(slashMac, 1);
+		slashReturn = testNormal.ToString();
 		return slashReturn;
 #endif
 
