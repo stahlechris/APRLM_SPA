@@ -193,8 +193,8 @@ public class MakeFile : MonoBehaviour  //TODO this is making a folder within the
 				int idx = 0;
 				Array.ForEach(dirAsCharArr, c =>
 				{
-					charAt = directory.ToString().Substring(idx, idx + 1);
-					print(charAt + ": " + (int)c);
+					//charAt = directory.ToString().Substring(idx, idx + 1);
+					print(directory.ToString()[idx] + ": " + (int)c);
 					idx += 1;
 				});
 //#if UNITY_EDITOR_OSX
