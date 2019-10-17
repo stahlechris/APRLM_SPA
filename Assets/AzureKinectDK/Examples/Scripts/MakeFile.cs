@@ -183,6 +183,7 @@ public class MakeFile : MonoBehaviour  //TODO this is making a folder within the
 
 	string getFileLocation()
 	{
+		Array.ForEach(pathFolderFileExt, path => print("path part: " + path));
 		string fileLoc = string.Join("", pathFolderFileExt);
 		return fileLoc;
 	}
