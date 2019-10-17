@@ -145,7 +145,7 @@ public class MakeFile : MonoBehaviour  //TODO this is making a folder within the
 		else
 		{
 			char[] slas = getSlash().ToCharArray();
-			if (slas.Length > 0) { print("analysis: " + slas[0].ToString()); } else { print("empty slas"); }
+			if (slas.Length > 0) { print("analysis: " + slas[0].ToString() + " " + (int)slas[0]); } else { print("empty slas"); }
 				folderName = "avg" + getSlash() + folderName;
 		}
 
