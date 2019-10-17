@@ -192,11 +192,11 @@ public class MakeFile : MonoBehaviour  //TODO this is making a folder within the
 	{
 		FILE_DESCRIPTION = "[Insert file description here]";
 
-		pathFolderFileExt[0] = PATH.Length > 0 ? PATH : getDataPath();
-		pathFolderFileExt[1] = getSlash();
-		pathFolderFileExt[2] = getFolderName(writeRaw);
-		pathFolderFileExt[3] = getFileName();
-		pathFolderFileExt[4] = FILE_EXTENSION;
+		pathFolderFileExt[0] = PATH.Length > 0 ? PATH : getDataPath(); ///Users/stahle/Documents/APRLM
+		pathFolderFileExt[1] = getSlash();								// /
+		pathFolderFileExt[2] = getFolderName(writeRaw);					// raw∕poseList∕
+		pathFolderFileExt[3] = getFileName();							// ⁩20191016_075725myfile
+		pathFolderFileExt[4] = FILE_EXTENSION;							// .txt
 
 		if (FOLDER_NAME.Length > 0)
 		{
@@ -223,7 +223,7 @@ public class MakeFile : MonoBehaviour  //TODO this is making a folder within the
 //#endif
 				Debug.Log("DirToCreate: " + dirToCreate); //DirToCreate: /Users/stahle/Documents/APRLM∕raw∕poseList∕
 				Debug.Log("directory: " + directory);
-				Debug.Log("file " + getFileLocation()); //file ⁩/⁨Users⁩/⁨stahle⁩/Unity2019⁩/⁨APRLM_SPA⁩/Assets⁩/poseMacTest/⁩20191016_075725myfile.txt
+				Debug.Log("file " + getFileLocation()); //file ⁩/Users/stahle/Documents/APRLM∕raw∕poseList∕⁩20191016_075725myfile.txt
 			}
 			catch (Exception e)
 			{
@@ -239,10 +239,11 @@ public class MakeFile : MonoBehaviour  //TODO this is making a folder within the
     public void WriteToFile(string message)  //TODO make a check to see if folder exists. (aka so we don't have to delete manually after every test capture)
     {
 		InitFileAndFolder();
-		print("Write path " + getFileLocation());
+		string pathToWrite = getFileLocation();
+		print("Write path " + pathToWrite);
 
         print("writing...");
-        File.WriteAllText(getFileLocation(), System.DateTime.Now + "\n" + FILE_DESCRIPTION + "\n" + message);
+        File.WriteAllText(pathToWrite, System.DateTime.Now + "\n" + FILE_DESCRIPTION + "\n" + message);
         print("wrote " + System.DateTime.Now + "\n" + FILE_DESCRIPTION + "\n" + message);
 	}
 
@@ -250,9 +251,10 @@ public class MakeFile : MonoBehaviour  //TODO this is making a folder within the
 	{
 		bool writeRawData = true;
 		InitFileAndFolder(writeRawData);
-		print("Write raw path " + getFileLocation()); //Write raw path ⁩/⁨Users⁩/⁨stahle⁩/Unity2019⁩/⁨APRLM_SPA⁩/Assets⁩/poseMacTest/⁩20191016_075725myfile.txt
+		string pathToWrite = getFileLocation();
+		print("Write raw path " + pathToWrite); //Write raw path ⁩/⁨Users⁩/⁨stahle⁩/Unity2019⁩/⁨APRLM_SPA⁩/Assets⁩/poseMacTest/⁩20191016_075725myfile.txt
 		print("writing raw...");
-		File.WriteAllText(getFileLocation(), System.DateTime.Now + "\n" + FILE_DESCRIPTION + "\n" + message);
+		File.WriteAllText(pathToWrite, System.DateTime.Now + "\n" + FILE_DESCRIPTION + "\n" + message);
 		print("wrote raw " + System.DateTime.Now + "\n" + FILE_DESCRIPTION + "\n" + message);
 
 	}
