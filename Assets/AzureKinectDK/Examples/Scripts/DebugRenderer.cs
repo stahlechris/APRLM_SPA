@@ -197,6 +197,7 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 				//for fake data, you need to multiply by something bigger than .3 on windows we did * .004
 				float scalingFactor = 0.004f;
 #if UNITY_EDITOR_OSX
+				Debug.Log("TODO -------------------------------------------- verify this");
 				scalingFactor = 0.4f;
 #endif
 				Vector3 posV3 = new Vector3(pos[0], -pos[1], pos[2]) * scalingFactor;
