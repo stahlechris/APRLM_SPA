@@ -194,8 +194,12 @@ public class DebugRenderer : PersistantSingleton<DebugRenderer>
 			{
 				float[] pos = skeletons[j].Joints[i].Position;
 
-                //for fake data, you need to multiply by something bigger than .3 on windows we did * .004
-				Vector3 posV3 = new Vector3(pos[0], -pos[1], pos[2]) * 0.4f;
+				//for fake data, you need to multiply by something bigger than .3 on windows we did * .004
+				float scalingFactor = 0.004f;
+#if UNITY_EDITOR_OSX
+				scalingFactor = 0.4f;
+#endif
+				Vector3 posV3 = new Vector3(pos[0], -pos[1], pos[2]) * scalingFactor;
 				positionsOfSameJointPositions.Add(posV3);
 			}
 			Vector3 averageOfSingleJointI = Vector3Helper.FindAveragePosition(positionsOfSameJointPositions);
